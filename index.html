@@ -14,7 +14,7 @@
 <script>
 /* Christine, 21 Oct: on a phone the launcher's three columns don't fit — the
    start page (m.html, Figma 9714:69420) takes over. ?desktop=1 keeps this one. */
-(function () { try { if (Math.min(screen.width, innerWidth) < 760 && !/[?&]desktop=1/.test(location.search)) location.replace('m.html'); } catch (e) {} })();
+(function () { try { if (Math.min(screen.width, innerWidth) < 760 && !/[?&]desktop=1/.test(location.search)) location.replace('m.html' + location.search + location.hash); } catch (e) {} })();
 </script>
 <title>Identity Round 2 · 2 Tabs</title>
 <style>
