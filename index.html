@@ -14,16 +14,16 @@
 <script>
 /* Christine, 21 Oct: on a phone the launcher's three columns don't fit — the
    start page (m.html, Figma 9714:69420) takes over. ?desktop=1 keeps this one. */
-(function () { try { if (Math.min(screen.width, innerWidth) < 760 && !/[?&]desktop=1/.test(location.search)) location.replace('m.html' + location.search + location.hash); } catch (e) {} })();
+(function () { try { if (Math.min(screen.width, innerWidth) < 760 && !/[?&]desktop=1/.test(location.search)) location.replace('m.html'); } catch (e) {} })();
 </script>
-<title>Identity Round 2 · 2 Tabs</title>
+<title>Identity Round 2</title>
 <style>
   /* Layout and values from Figma Identity—WIP 9473:52370 (16 Oct 2026).
      Controls (segments, prev / next, replay) are not in the frame yet; they
      reuse the frame's own pieces: the selection pill (white = on,
      white 15% = off), 14px body, 1px white-10% divider. */
   :root {
-    --bg: #000;
+    --bg: #0e0e0b;                 /* round 71 (Christine): the stage in the panels' grey, a touch darker than --panel */
     --panel: #141410;              /* banner/text_primary */
     --text-1: #f3f1ed;             /* global/text/primary (dark) */
     --text-2: rgba(255,255,255,.6);/* global/text/secondary (dark) */
@@ -53,7 +53,7 @@
     width: 358px; min-width: 358px; height: 100vh; background: var(--panel);
     display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
   }
-  .title { padding: 24px 24px 0; font-size: 20px; line-height: 1.2; letter-spacing: .1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .title { padding: 20px 25px 0; font-size: 10px; line-height: 1.3; letter-spacing: 0;   /* round 64 (Christine): the panel's own 10px, level with “Checklist” */ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   /* controls: label left, square segments right, 0.5px rules between */
   .controls { display: flex; flex-direction: column; gap: 11px; padding: 0 0 24px; }
@@ -91,7 +91,8 @@
   .check::-webkit-scrollbar { display: none; }
   .check .rule { flex: 0 0 1px; }
   .check .ttl { padding: 20px 20px 16px; color: var(--text-2); }
-  .rtabs { flex: 0 0 auto; display: flex; gap: 20px; padding: 20px 20px 0; border-bottom: .5px solid var(--line); }
+  .rtitle { padding: 20px 20px 0; flex: 0 0 auto; }
+  .rtabs { flex: 0 0 auto; display: flex; gap: 20px; padding: 16px 20px 0; border-bottom: .5px solid var(--line); }
   .rtabs button { padding: 0 0 12px; color: var(--text-2); box-shadow: inset 0 -1px 0 transparent; transition: color .15s, box-shadow .15s; }
   .rtabs button:hover { color: var(--text-1); }
   .rtabs button.on { color: var(--text-1); box-shadow: inset 0 -1px 0 var(--text-1); }
@@ -103,7 +104,15 @@
   .vrow .vt .tag { color: var(--text-2); font-size: 10px; }
   .vrow p { line-height: 1.3; }
   .check .lab { flex: 0 0 auto; padding: 24px 20px 10px; color: var(--text-2); }
-  .check .grp { flex: 0 0 auto; padding: 28px 20px 12px; }
+  .check .grp { flex: 0 0 auto; padding: 0; }
+  .check .grp .gt { padding: 16px 20px; cursor: pointer; align-items: center; }
+  .check .grp .gt:hover { background: var(--hover); }
+  .check .grp .gch { width: 14px; height: 14px; margin-left: auto; flex: 0 0 14px; color: var(--text-2); transition: transform .2s; }
+  .check .grp.open .gch { transform: rotate(180deg); }
+  .check .grp .gbody { display: none; flex-direction: column; }
+  .check .grp.open .gbody { display: flex; }
+  .check .grp .gbody > .gw { margin-top: 0; padding: 0 20px 12px 44px; }
+  .check .grp .gbody > .gnote { margin: 0 20px 12px 44px; }
   .check .grp .gt { display: flex; gap: 8px; color: var(--text-1); font-size: 13px; line-height: 1.25; letter-spacing: -0.2px; }
   .check .grp .gn { flex: 0 0 auto; color: var(--text-2); }
   .check .grp .gw { margin-top: 6px; padding-left: 24px; color: var(--text-2); }
@@ -111,7 +120,8 @@
   .check .grp .gnote b { display: block; margin-bottom: 2px; font-weight: 400; color: var(--text-2); font-size: 10px; }
   .check .grp.plain { padding-top: 32px; }
   .check .grp.plain .gt { color: var(--text-2); font-size: 10px; }
-  .check .grp.plain .gw { padding-left: 0; }
+  #openTab > .gw { color: var(--text-2); padding: 20px 20px 12px; }
+  .check .grp.plain .gbody > .gw { padding: 0 20px 12px; }   /* round 65: under its title, like the other groups' lines */
   .check .row .l { padding-left: 24px; }
   .row {
     flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -164,15 +174,20 @@
 <body>
 
 <aside class="left">
-  <div class="title">Identity Round 2 · 2 Tabs</div>
+  <div class="title">Identity Round 2</div>
 
   <div class="controls">
     <div class="ctl"><span class="t2">Build</span>
       <div class="seg" id="segDay"><button data-v="DayOne">Day 01</button><button data-v="Day30">Day 30</button></div></div>
     <!-- Christine, 21 Oct: Day 01 starts from the onboarding; this skips it (home at once) -->
-    <div class="rule" id="ruleSkip"></div>
-    <div class="ctl" id="ctlSkip"><span class="t2">Skip onboarding</span>
+    <!-- round 67 (Christine): Skip onboarding removed — every feature has its own cover and onboarding now -->
+    <div class="rule" id="ruleSkip" hidden></div>
+    <div class="ctl" id="ctlSkip" hidden><span class="t2">Skip onboarding</span>
       <div class="seg" id="segSkip"><button data-v="off">Off</button><button data-v="on">On</button></div></div>
+    <!-- Christine, 23 Oct (round 58): the onboarding version moved here from the right tab, Day 01 only -->
+    <div class="rule" id="ruleVonb"></div>
+    <div class="ctl" id="ctlVonb"><span class="t2">Onboarding</span>
+      <div class="seg" id="segVonb"><button data-v="2">V1</button><button data-v="n4">V2</button></div></div>
   </div>
 </aside>
 
@@ -182,11 +197,13 @@
 </main>
 
 <aside class="right">
-  <!-- Christine, 22 Oct: a second tab — Vault onboarding V1 (ours) / V2 (Yuan's V3).
-       Client share (round 37): Yuan's V2 only, the tab is gone; V1 stays in R1. -->
-  <div class="rtabs" id="rtabs" style="display:none"><button data-t="check">Checklist</button><button data-t="vonb">Vault onboarding</button></div>
-  <nav class="check" id="check"><div class="ttl">Checklist</div></nav>
-  <nav class="check" id="vonb" hidden></nav>
+  <!-- Christine, 22 Oct: a second tab — Vault onboarding. Round 40 (23 Oct): V1 = Yuan's V3,
+       V2 = the scroll story (Figma 9890:138727). Ours (r31) stays in R1 / &ut2vonb=1. -->
+  <div class="title rtitle">Checklist</div><!-- round 70 (Christine): Checklist is the panel title; the tabs are Done / Still open -->
+  <div class="rtabs" id="rtabs"><button data-t="check">Done</button><button data-t="open">Still open</button></div>
+  <nav class="check" id="check"></nav>
+  <nav class="check" id="openTab" hidden></nav><!-- round 66 (Christine): Still open has its own tab -->
+  <nav class="check" id="vonb" hidden></nav><!-- round 58: unused, the version is on the left -->
 </aside>
 
 <script>
@@ -350,7 +367,7 @@ var NAMES = { identity: 'Identity', folder: 'Folder', aliasid: 'Alias ID', idcar
 var STORE = 'ut2-launcher-2tabs-v2';
 var S = { i: 0, day: 'Day30', mode: 'after', skip: 'off', vonb: '1', rtab: 'check' };
 try { var saved = JSON.parse(localStorage.getItem(STORE) || 'null'); if (saved) Object.assign(S, saved); } catch (e) {}
-S.vonb = '2'; S.rtab = 'check';   /* round 37: Yuan's Vault onboarding only */
+if (/^n2?$/.test(S.vonb)) S.vonb = 'n3'; if (S.vonb === 'n3') S.vonb = 'n4'; if (!/^(2|n4)$/.test(S.vonb)) S.vonb = '2';   /* round 59: V3 = n4 · round 64: the tabbed V2 (n3) dropped, n4 is now V2 */   /* round 55: V2.1 retired, V2.2 is now just V2 */   /* round 44: V2.1 retired */ S.rtab = 'check'; S.skip = 'off';   /* round 67: no Skip control, so never skip */   /* round 40: V1 = Yuan's (default), V2 = the scroll page */
 /* Christine, 19 Oct: always open with nothing picked, on the plain prototype;
    picking a row plays its flow, picking it again unpicks it (S.i = -1) */
 S.i = -1;
@@ -361,7 +378,7 @@ var frame = $('frame'), slide = $('slide'), loading = $('loading'), check = $('c
 var esc = function (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
 
 /* checklist rows, grouped like the Notion page */
-var lastGroup = null;
+var lastGroup = null, curBody = check;
 SLIDES.forEach(function (s, i) {
   if (s.group !== lastGroup) {
     lastGroup = s.group;
@@ -370,8 +387,17 @@ SLIDES.forEach(function (s, i) {
     g.innerHTML = '<div class="gt">' + (G.n ? '<span class="gn">' + G.n + '</span>' : '') + '<span>' + esc(G.t) + '</span></div>' +
       (G.why ? '<div class="gw">' + esc(G.why) + '</div>' : '') +
       (G.note ? '<div class="gnote"><b>Note</b>' + esc(G.note) + '</div>' : '');   /* Christine, 22 Oct (round 38) */
+    /* round 64 (Christine: "타이틀들만 보여주고 누르면 더"): a group shows only its title; tap it for the why, the note and the rows */
+    var gb = document.createElement('div'); gb.className = 'gbody';
+    var gw0 = g.querySelector('.gw'), gn0 = g.querySelector('.gnote');
+    if (gw0) gb.appendChild(gw0); if (gn0) gb.appendChild(gn0);
+    g.querySelector('.gt').insertAdjacentHTML('beforeend', '<svg class="gch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>');
+    (function (g) { g.querySelector('.gt').addEventListener('click', function () { g.classList.toggle('open'); }); })(g);
+    var r0 = document.createElement('div'); r0.className = 'rule'; gb.appendChild(r0);
+    g.appendChild(gb);
     check.appendChild(g);
-    var r0 = document.createElement('div'); r0.className = 'rule'; check.appendChild(r0);
+    var gr0 = document.createElement('div'); gr0.className = 'rule grule'; check.appendChild(gr0);
+    curBody = gb;
   }
   var b = document.createElement('button');
   b.className = 'row' + (s.done ? ' done' : '') + (s.noCheck ? ' nocheck' : ''); b.dataset.i = i;
@@ -379,18 +405,28 @@ SLIDES.forEach(function (s, i) {
   b.innerHTML = '<span class="l"><span class="x">' + esc(s.title) + '</span></span>' +
     (s.noCheck ? '' : '<span class="pill"><img src="assets/launcher/check.svg" alt=""></span>');
   b.addEventListener('click', function () { if (i === S.i) unpick(); else go(i); });
-  check.appendChild(b);
-  var r = document.createElement('div'); r.className = 'rule'; check.appendChild(r);
+  curBody.appendChild(b);
+  var r = document.createElement('div'); r.className = 'rule'; curBody.appendChild(r);
 });
+
+/* round 66: the plain group (Still open) moves out of the checklist into its own tab, already open */
+var openEl = $('openTab');
+(function () {
+  var g = check.querySelector('.grp.plain'); if (!g) return;
+  var body = g.querySelector('.gbody');
+  while (body.firstChild) openEl.appendChild(body.firstChild);
+  var gr = g.nextElementSibling; if (gr && gr.classList.contains('grule')) gr.remove();
+  g.remove();
+})();
 
 /* Christine, 22 Oct: Vault onboarding — V1 is the current one, V2 is Yuan's V3 (ut2vonb=2) */
 var VONB = [
-  { v: '1', t: 'V1 · Current', tag: 'Figma 9822:113803',
-    p: ['Black tray: the mini Vault, “A password manager that protects all of you”, Learn more.',
-        'Learn more opens the intro page: the same picture and title, then two cards (Share an alias, not your number · Calls, messages, emails, transactions all happen here), art still WIP.'] },
-  { v: '2', t: 'V2 · V3 build (Yuan)', tag: '03_UserTest_V1/V3',
+  { v: '2', t: 'V1 · V3 build', tag: '03_UserTest_V1/V3',
     p: ['Tray: “Meet your smart vault” over the ring of logos, Learn more.',
-        'Learn more opens the scrolling page: One vault for everything that’s yours online · Sign up without giving away your real info · Stay private when you meet new people · A virtual card for subscriptions · Get started.'] }
+        'Learn more opens the scrolling page: One vault for everything that’s yours online · Sign up without giving away your real info · Stay private when you meet new people · A virtual card for subscriptions · Get started.'] },
+  { v: 'n3', t: 'V2 · Logos first', tag: 'Figma 9896:138728',
+    p: ['No + and no kinds: the tray shows your things with their logos straight away, rising one by one on a loop.',
+        'Three pages: One vault for everything that’s yours (the logo list) · Share an alias, not your real info · Calls, texts, emails and payments — all in one place — then FAQs.'] }
 ];
 var vonbEl = $('vonb');
 VONB.forEach(function (o) {
@@ -403,7 +439,7 @@ VONB.forEach(function (o) {
 });
 function paintTabs() {
   $('rtabs').querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.t === S.rtab); });
-  check.hidden = S.rtab !== 'check'; vonbEl.hidden = S.rtab !== 'vonb';
+  check.hidden = S.rtab !== 'check'; openEl.hidden = S.rtab !== 'open'; vonbEl.hidden = S.rtab !== 'vonb';
   vonbEl.querySelectorAll('.vrow').forEach(function (b) { b.classList.toggle('on', b.dataset.v === S.vonb); });
 }
 $('rtabs').addEventListener('click', function (e) {
@@ -413,7 +449,7 @@ $('rtabs').addEventListener('click', function (e) {
 /* the Vault, its onboarding raised at once (ut2vonbgo) */
 function loadVonb() {
   frame.src = 'V2/' + S.day + '/app.html?skip=1&tab=vaults' + (S.day === 'DayOne' ? '&intro=0' : '') +
-    '&ut2=after&ut2name=' + UT2_NAME + '&ut2cards=' + UT2_CARDS + '&ut2intro=' + UT2_INTRO + '&ut2vonb=' + S.vonb + '&ut2vonbgo=1&v=20261022-ut129';
+    '&ut2=after&ut2name=' + UT2_NAME + '&ut2cards=' + UT2_CARDS + '&ut2intro=' + UT2_INTRO + '&ut2vonb=' + S.vonb + '&ut2vonbgo=1&v=20261023-ut144';
   loading.textContent = 'Opening the Vault onboarding…';
   loading.classList.add('on');
   clearTimeout(hideT); hideT = setTimeout(function () { loading.classList.remove('on'); }, 2500);
@@ -425,7 +461,7 @@ function seg(id, key) {
     S[key] = b.dataset.v; paint(); load();
   });
 }
-seg('segDay', 'day'); seg('segSkip', 'skip');
+seg('segDay', 'day'); seg('segSkip', 'skip'); seg('segVonb', 'vonb');
 /* Day 01 opens on its onboarding (the build's welcome flow) unless Skip onboarding is on; Day 30 has none.
    intro=0 is what hides the welcome. skip=1 is only the entry flag and is not read. */
 function introQ(day) { return day === 'DayOne' && S.skip === 'on' ? '&intro=0' : ''; }
@@ -440,11 +476,13 @@ function paint() {
   paintTabs();
   var s = curS();
   var cur = { day: (s && s.day) || S.day, skip: S.skip === 'on' ? 'on' : 'off' };
-  $('ctlSkip').hidden = $('ruleSkip').hidden = cur.day !== 'DayOne';   /* only Day 01 has an onboarding */
-  [['segDay', 'day'], ['segSkip', 'skip']].forEach(function (p) {
+  $('ctlSkip').hidden = $('ruleSkip').hidden = true;   /* round 67: the control is gone */
+  $('ctlVonb').hidden = $('ruleVonb').hidden = cur.day !== 'DayOne';
+  cur.vonb = S.vonb;
+  [['segDay', 'day'], ['segSkip', 'skip'], ['segVonb', 'vonb']].forEach(function (p) {
     $(p[0]).querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.v === cur[p[1]]); });
   });
-  check.querySelectorAll('.row').forEach(function (b) { b.classList.toggle('on', +b.dataset.i === S.i); });
+  document.querySelectorAll('.check .row').forEach(function (b) { b.classList.toggle('on', +b.dataset.i === S.i); });
   if (!s) {
     if (det.parentNode) det.parentNode.removeChild(det);
     try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {}
@@ -465,7 +503,8 @@ function paint() {
   }
   html += '<button class="again" type="button">' + AGAIN_SVG + '<span>Show again</span></button>';
   det.innerHTML = html;
-  var row = check.querySelector('.row.on');
+  var row = document.querySelector('.check .row.on'), box = row ? row.closest('.check') : check;
+  if (row && row.closest('.grp')) row.closest('.grp').classList.add('open');   /* a picked row keeps its group open */
   /* the row is followed by its rule; the panel goes between them */
   if (row) row.parentNode.insertBefore(det, row.nextSibling);
   var sm = $('segMode');
@@ -476,9 +515,9 @@ function paint() {
   det.querySelector('.again').onclick = load;
   /* keep the picked row in view inside the list only (never the page) */
   if (row) {
-    var top = row.offsetTop - check.offsetTop, bottom = top + row.offsetHeight + det.offsetHeight;
-    if (top < check.scrollTop + 40) check.scrollTop = Math.max(0, top - 40);
-    else if (bottom > check.scrollTop + check.clientHeight) check.scrollTop = Math.min(top - 40, bottom - check.clientHeight + 24);
+    var top = row.offsetTop - box.offsetTop, bottom = top + row.offsetHeight + det.offsetHeight;
+    if (top < box.scrollTop + 40) box.scrollTop = Math.max(0, top - 40);
+    else if (bottom > box.scrollTop + box.clientHeight) box.scrollTop = Math.min(top - 40, bottom - box.clientHeight + 24);
   }
   try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {}
 }
@@ -489,7 +528,7 @@ function load() {
   var s = curS();
   if (!s) {   /* nothing picked: the plain prototype, home, no ring */
     frame.src = 'V2/' + S.day + '/app.html?skip=1&tab=home' + introQ(S.day) +
-      '&ut2=after&ut2name=' + UT2_NAME + '&ut2cards=' + UT2_CARDS + '&ut2intro=' + UT2_INTRO + '&ut2vonb=' + S.vonb + '&v=20261022-ut129';
+      '&ut2=after&ut2name=' + UT2_NAME + '&ut2cards=' + UT2_CARDS + '&ut2intro=' + UT2_INTRO + '&ut2vonb=' + S.vonb + '&v=20261023-ut144';
     loading.textContent = 'Opening the prototype…';
     loading.classList.add('on');
     clearTimeout(hideT); hideT = setTimeout(function () { loading.classList.remove('on'); }, 2500);
@@ -500,7 +539,7 @@ function load() {
     introQ(day) +
     '&ut2=' + (s.done ? S.mode : 'after') + '&ut2name=' + UT2_NAME +
     '&ut2cards=' + UT2_CARDS + '&ut2intro=' + UT2_INTRO +
-    (s.done ? '&ut2go=' + s.id : '') + '&ut2vonb=' + S.vonb + '&v=20261022-ut129';
+    (s.done ? '&ut2go=' + s.id : '') + '&ut2vonb=' + S.vonb + '&v=20261023-ut144';
   loading.textContent = (s.id === 'c7' || (s.id === 'v09' && (s.day || S.day) === 'DayOne')) ? 'Playing the flow…' : 'Opening the screen…';
   loading.classList.add('on');
   clearTimeout(hideT); hideT = setTimeout(function () { loading.classList.remove('on'); }, s.id === 'c7' ? 16000 : 2500);

@@ -112,7 +112,6 @@ html .ic-card.real, html .ic-card.idf.real { box-shadow: none !important; }
 html .ic-card.real::after { border-color: rgba(40, 70, 130, 0.14) !important; }
 #activityScreen .av-row[data-cat="identity"] .av-av:not(:has(img)), #activityScreen .av-row[data-cat="idcard"] .av-av:not(:has(img)) { background: #141410 !important; color: #ff550c !important; }
 #activityScreen .av-row[data-cat="identity"] .av-av:not(:has(img)) svg, #activityScreen .av-row[data-cat="idcard"] .av-av:not(:has(img)) svg { fill: #ff550c; }
-#activityScreen .av-row[data-cat="identity"] .av-badge:not(.av-badge-face), #activityScreen .av-row[data-cat="idcard"] .av-badge:not(.av-badge-face) { background: #141410 !important; color: #ff550c !important; }
 #icList.alias-src .ic-av:not([style*="background-image"]) { background-color: #2a2a26 !important; color: #ff550c !important; }
 #icList.alias-src .ic-av:not([style*="background-image"]) svg { fill: #ff550c; }
 #icList.alias-src .ic-item-badge { background-color: #2a2a26 !important; color: #ff550c !important; }

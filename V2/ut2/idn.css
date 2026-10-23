@@ -1,0 +1,88 @@
+/* Identity onboarding V2 (Christine, 23 Oct · Figma 9923:147149): the combined-activity page.
+   Values are the Figma tokens' (names kept as the custom properties below). */
+#iiN {
+  --idn-text-primary: var(--global-text-primary, #f3f1ed);       /* global/text/primary */
+  --idn-text-secondary: var(--global-text-secondary, rgba(255, 255, 255, .6));   /* global/text/secondary */
+  --idn-divider: var(--divider-divider, rgba(255, 255, 255, .1)); /* divider/divider */
+  --idn-active: var(--selection-pagenation-active, #fff);         /* selection/pagenation-active */
+  --idn-sage: var(--identity-sage-01, #a2bf7a);                   /* identity/sage-01 */
+  --idn-jade: var(--category-jade-guard-01, #00838a);             /* category/jade-guard-01 */
+  --idn-fail: var(--status-fail-subtle, #b83100);                 /* status/fail-subtle */
+}
+#iiN .idn-art { display: flex; align-items: center; justify-content: center; }
+#iiN .vti-copy p { display: none; }
+.idn-panel { position: relative; width: 353px; max-width: calc(100% - 40px); height: 286px; box-sizing: border-box; padding-top: 24px; border: 1px solid var(--idn-divider); border-radius: 19.15px; background: #000; overflow: hidden; }
+.idn-bar { position: relative; height: 47.6px; box-shadow: inset 0 -.9px 0 var(--idn-divider); overflow: hidden; }   /* the divider as a shadow so the clip leaves the active line whole */
+.idn-tabs { position: absolute; left: 0; top: 0; bottom: 0; display: flex; align-items: center; white-space: nowrap; transition: transform .5s cubic-bezier(.32, .72, 0, 1); }
+.idn-tab { padding: 14.36px 17.95px; font-size: 14.36px; line-height: 1.3; letter-spacing: -.2872px; color: var(--idn-text-secondary); transition: color .3s ease; }
+.idn-tab.on { color: var(--idn-text-primary); }
+.idn-line { position: absolute; left: 0; bottom: 0; height: 1px; background: var(--idn-active); transition: transform .5s cubic-bezier(.32, .72, 0, 1), width .5s cubic-bezier(.32, .72, 0, 1); }
+.idn-still .idn-tabs, .idn-still .idn-line, .idn-still .idn-tab { transition: none; }
+.idn-pages { position: relative; }
+.idn-pg { position: absolute; left: 0; right: 0; top: 0; opacity: 0; transform: translateY(8px); transition: opacity .35s ease, transform .5s cubic-bezier(.32, .72, 0, 1); }
+.idn-pg.on { opacity: 1; transform: none; transition-delay: .12s; }
+.idn-still .idn-pg { transition: none; }
+.idn-row { position: relative; display: flex; align-items: center; gap: 10.77px; padding: 17.95px; border-bottom: .9px solid var(--idn-divider); color: var(--idn-text-primary); }
+.idn-row.two { align-items: flex-start; }
+.idn-av { position: relative; flex: 0 0 35.9px; width: 35.9px; height: 35.9px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.idn-av img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.idn-av.ini { background: rgba(162, 191, 122, .14); color: var(--idn-sage); font-size: 21.54px; line-height: 1.1; }
+.idn-av.logo { border-radius: 0; }
+.idn-tx { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3.59px; }
+.idn-top { display: flex; gap: 14.36px; font-size: 14.36px; line-height: 1.3; letter-spacing: -.2872px; }
+.idn-top b { flex: 1 1 auto; min-width: 0; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.idn-top em { flex: 0 0 auto; font-style: normal; text-align: right; }
+.idn-sub { display: flex; align-items: center; gap: 1.8px; font-size: 12.56px; line-height: 1.2; letter-spacing: -.2512px; color: var(--idn-text-secondary); }
+.idn-sub > span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.idn-row.two .idn-sub > span { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.idn-in { flex: 0 0 14.36px; width: 14.36px; height: 14.36px; filter: invert(1); opacity: .6; }   /* the project's Incoming icon is ink-coloured; turned light for the dark panel */
+.idn-tag { flex: 0 0 auto; padding: 3.59px 10.77px; border-radius: 3.59px; font-size: 12.56px; line-height: 1.2; letter-spacing: -.2512px; color: var(--idn-text-primary); }
+.idn-tag.spam { background: var(--idn-fail); }
+.idn-dot { position: absolute; left: 5.4px; top: calc(50% - 3.59px); width: 7.18px; height: 7.18px; border-radius: 50%; background: var(--idn-text-primary); }
+.idn-row.two .idn-dot { top: 32px; }
+.idn-date { padding: 21.54px 17.95px 7.18px; font-size: 9.67px; line-height: 1.3; letter-spacing: .0967px; text-transform: uppercase; color: var(--idn-text-primary); }
+@media (prefers-reduced-motion: reduce) { .idn-tabs, .idn-line, .idn-tab, .idn-pg { transition: none; } }
+
+/* round 59 · V3 (&ut2vonb=n4): the combined activity as one feed drifting down (Christine's reference video) */
+#iiN.idq-sec .idq-art { display: block; padding: 0 !important; }
+.idq-feed { position: absolute; left: 0; right: 0; top: 40px; height: 400px; overflow: hidden;   /* round 60 (Christine: "height 좀 더 크롭"): about four rows, like the Figma panel's 286 */
+  -webkit-mask: linear-gradient(180deg, transparent 0, #000 64px, #000 100%); mask: linear-gradient(180deg, transparent 0, #000 64px, #000 100%); }
+.idq-run { position: absolute; left: 20px; right: 20px; top: 0; transform: none; }
+#iiN.run .idq-run { animation: idqDrift 30s linear infinite; }
+@keyframes idqDrift { from { transform: translateY(0); } to { transform: translateY(calc(-1 * var(--h, 0px))); } }   /* round 62 (Christine): the feed rises, bottom → top */
+.idq-set { display: block; }   /* Figma list items: each row carries its own divider */
+/* round 63 (Christine): the rows as the Vault page's activity cards (vonbn .vtn-act) — a soft grey card each, no divider */
+#iiN .idq-run .idn-row { margin-bottom: 9.39px; padding: 17.6px; gap: 10.56px; border: 0; border-radius: 9.39px; background: #141410; }   /* = .vtn-act */
+#iiN .idq-run .idn-av { flex-basis: 35.2px; width: 35.2px; height: 35.2px; }
+#iiN .idq-run .idn-dot { left: 5px; }
+#iiN .idq-run .idn-av.logo { border-radius: 50%; }   /* the logo files carry a black square; round, like the Vault cards' avatars */
+/* the bottom goes soft in three steps, as in the reference, then into the black above the button */
+.idq-blur { position: absolute; left: 0; right: 0; bottom: 0; pointer-events: none; }
+.idq-blur.b1 { height: 30%; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); -webkit-mask: linear-gradient(180deg, transparent, #000 40%); mask: linear-gradient(180deg, transparent, #000 40%); }
+.idq-blur.b2 { height: 20%; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); -webkit-mask: linear-gradient(180deg, transparent, #000 50%); mask: linear-gradient(180deg, transparent, #000 50%); }
+.idq-blur.b3 { height: 14%; background: linear-gradient(180deg, rgba(0, 0, 0, 0), #000 85%); }
+@media (prefers-reduced-motion: reduce) { #iiN.run .idq-run { animation: none; } }
+/* round 68 (Christine): the Identity cover keeps one sentence, like the Vault's "Meet your smart vault" */
+#icIntroTray .vti-tray-p { display: none; }
+/* round 72 (Christine): page 1's card stack sits in the middle — 40px higher than the build's */
+#iiIntro #iiS1 .iti-scene .iti-stack { top: calc(50% - 76px - var(--sab, 0px) / 2); }
+
+/* round 76 · V2: the identity card, its activity arriving underneath like notifications and stacking up */
+#iiN.idk-sec .idk-art { display: block; padding: 0 !important; }
+.idk-wrap { position: absolute; left: 20px; right: 20px; top: 24px; bottom: 0; display: flex; flex-direction: column; }
+.idk-card { position: relative; z-index: 2; }
+.idk-card .ic-card { position: relative; transform: none; }
+.idk-notes { position: relative; z-index: 1; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; margin-top: 9.39px; overflow: hidden;
+  /* round 77 (Christine): no fade on the notes themselves — only where they would run into Get started / Create identity */
+  -webkit-mask: linear-gradient(180deg, #000 calc(100% - 150px), transparent calc(100% - 104px)); mask: linear-gradient(180deg, #000 calc(100% - 150px), transparent calc(100% - 104px)); }
+.idk-n { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s cubic-bezier(.32, .72, 0, 1), opacity .4s ease; }
+.idk-n.on { grid-template-rows: 1fr; }
+.idk-n.out { opacity: 0; }
+.idk-in { min-height: 0; overflow: hidden; }
+.idk-in .idn-row { margin-bottom: 9.39px; padding: 17.6px; gap: 10.56px; border: 0; border-radius: 9.39px; background: #141410;   /* = .vtn-act, as the feed */
+  opacity: 0; transform: translateY(-18px) scale(.94); transform-origin: 50% 0; transition: opacity .3s ease .08s, transform .55s cubic-bezier(.34, 1.56, .64, 1) .08s; }
+.idk-n.on .idn-row { opacity: 1; transform: none; }
+.idk-in .idn-av { flex-basis: 35.2px; width: 35.2px; height: 35.2px; }
+.idk-in .idn-av.logo { border-radius: 50%; }
+.idk-in .idn-dot { left: 5px; }
+@media (prefers-reduced-motion: reduce) { .idk-n, .idk-in .idn-row { transition: none; } }

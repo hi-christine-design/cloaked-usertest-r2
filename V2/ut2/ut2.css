@@ -1875,6 +1875,7 @@ html.ut2-after body:has(#iiIntro.open) .bottom-nav,
 html.ut2-after body:has(#vaultsScreen.open > .ut2-onb:not(.done)) .bottom-nav,
 html.ut2-after.ut2-vtrayon .bottom-nav,
 html.ut2-after body:has(#vtIntroTray.on) .bottom-nav,
+html.ut2-after body:has(#vtnPage.open) .bottom-nav,
 html.ut2-after body:has(#vtIntro.open) .bottom-nav { transform: translateY(140%) !important; opacity: 0 !important; pointer-events: none !important; transition: transform .35s cubic-bezier(.32, .72, 0, 1), opacity .25s ease !important; }
 /* Christine, 22 Oct: Day 01's Vault has the tab strip, like Day 30 */
 html.day1.ut2-after #vtL2Tabs { display: flex !important; gap: 28px; }
@@ -1895,3 +1896,5 @@ html.day1.ut2-after #vtL2Tabs { display: flex !important; gap: 28px; }
 .d1j-det.dark.ut2-hasfwd .d1j-det-foot { top: 287px; }
 .d1j-det.dark.ut2-hasfwd.has-otp .ut2-d1fwd { top: 466px; }
 .d1j-det.dark.ut2-hasfwd.has-otp .d1j-det-acts { top: 546px; }
+/* round 75 (Christine): the Vault's "Add an item" showed Import twice — the build's own foot tile and our pill at the bottom; only the pill stays (as #d1jAdd already does) */
+.ut2-after #vtAdd .vt-add-foot { display: none !important; }

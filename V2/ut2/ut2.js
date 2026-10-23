@@ -54,7 +54,31 @@
     var VNF = '../ut2/v3vonb' + (DAY1 ? '1' : '30');
     document.documentElement.classList.add('ut2-vonb2');
     document.write('<link rel="stylesheet" href="' + VNF + '.css' + (VNV ? '?' + VNV : '') + '"><script src="' + VNF + '.js' + (VNV ? '?' + VNV : '') + '"></scr' + 'ipt>');
+    /* Christine, 23 Oct: Vault onboarding V2 (Figma 9890:138727) — Yuan's tray, then our scroll page (&ut2vonb=n = V2.1, n2 = V2.2) */
+    if (/^n[234]?$/.test(Q.get('ut2vonb') || '')) document.write('<link rel="stylesheet" href="../ut2/vonbn.css' + (VNV ? '?' + VNV : '') + '"><script src="../ut2/vonbn.js' + (VNV ? '?' + VNV : '') + '"></scr' + 'ipt>');
   }
+  /* round 73 (Christine): for review, Day 01 raises the Vault and Identity covers on EVERY visit to
+     those tabs, not just the first (the real app shows them once). Wrapped at load, outside every
+     other goTab wrapper; the trays' own guards keep a second call from doing anything. */
+  var CUR_TAB = '';
+  if (AFTER && DAY1) window.addEventListener('load', function () {
+    var _g = window.goTab; if (typeof _g !== 'function') return;
+    window.goTab = window.showTab = function (name) {
+      var r = _g.apply(this, arguments);
+      CUR_TAB = name;
+      /* round 76: only if you are still on that tab when the timer fires — a tray raised on a tab you
+         already left kept body.nav-out on, and the tab bar vanished on the next screen */
+      if (name === 'vaults' && typeof window.vtIntroTray === 'function') setTimeout(function () { if (CUR_TAB === 'vaults') window.vtIntroTray(); }, 480);
+      if (name === 'idcard' && typeof window.icIntroTray === 'function') setTimeout(function () { if (CUR_TAB === 'idcard') window.icIntroTray(); }, 480);
+      /* the builds' own first-visit timers have the same race: fold away a tray that came up on a tab you had already left */
+      setTimeout(function () {
+        var vt = document.getElementById('vtIntroTray'), ic = document.getElementById('icIntroTray');
+        if (CUR_TAB !== 'vaults' && vt && vt.classList.contains('on') && window.vtIntroTrayClose) window.vtIntroTrayClose();
+        if (CUR_TAB !== 'idcard' && ic && ic.classList.contains('on') && window.icIntroTrayClose) window.icIntroTrayClose();
+      }, 560);
+      return r;
+    };
+  });
   /* the launcher's Vault onboarding rows land on the Vault with its tray already up */
   if (AFTER && Q.get('ut2vonbgo') === '1') window.addEventListener('load', function () {
     setTimeout(function () {
@@ -67,6 +91,9 @@
     document.documentElement.classList.add('ut2-v3id');
     var V3F = '../ut2/v3id' + (DAY1 ? '1' : '30');
     document.write('<link rel="stylesheet" href="' + V3F + '.css' + (V3V ? '?' + V3V : '') + '"><script src="' + V3F + '.js' + (V3V ? '?' + V3V : '') + '"></scr' + 'ipt>');
+    /* Christine, 23 Oct (round 58): Onboarding V2 also swaps the Identity intro's three scenes for one combined-activity page (Figma 9923:147149) */
+    /* round 59: V3 (&ut2vonb=n4) = V2's Vault, and the same Identity page as a scrolling feed instead of tabs */
+    if (/^n[34]$/.test(Q.get('ut2vonb') || '')) document.write('<link rel="stylesheet" href="../ut2/idn.css' + (V3V ? '?' + V3V : '') + '"><script src="../ut2/idn.js' + (V3V ? '?' + V3V : '') + '"></scr' + 'ipt>');
   }
 
   var NAMES = {
@@ -1099,6 +1126,16 @@
       if (/^\s*Risk level\s*$/.test(h.textContent)) h.textContent = 'Digital risk';
     });
     [].forEach.call(document.querySelectorAll('[data-tile-label="Risk level"]'), function (c) { c.dataset.tileLabel = 'Digital risk'; });
+  }
+  /* Christine, 23 Oct: Home's "Create alias identity" card keeps the mark the start-here
+     card showed during onboarding (graph.svg), instead of switching to the thin outline eye */
+  function d1jMark() {
+    if (!AFTER) return;
+    [].forEach.call(document.querySelectorAll('.d1j-mark'), function (m) {
+      if (m.__ut2mk || !m.querySelector('svg path[d^="M1.6 10S5.4"]')) return;
+      m.__ut2mk = 1;
+      m.innerHTML = '<img src="assets/icons/Icons-Items/avatar-image/graph.svg" alt="" style="width:40px;height:40px;border-radius:50%;display:block">';
+    });
   }
   function d1Tabs() {
     if (!DAY1 || !AFTER) return;
@@ -3950,7 +3987,7 @@
     if (!AFTER) return;
     navActive();
     skipNqGen(); addGenBanner(); addTrayCaps(); addSubs();
-    addRowTags(); addPurposeSkip(); idCardPicksOnly(); aliasFlow(); addBreakdownLink(); aliasTab(); d1Tabs(); d1Fwd(); homeRisk(); flatAll(); fwdOut(); folderList(); pinButton(); faqTop(); othBankRow(); vaultQ(); vaultFoldBtn(); avTxTab(); if (AVTX) avTxApply(); addKeywordHint(); labelGroupButton(); addFolderTag(); vaultToggle(); mountOnb(); vaultTray(); mintify(); idDetailFlat(); openSpin(); aliasPageTitle(); wfStart(); idIntroArt(); fitMarks();
+    addRowTags(); addPurposeSkip(); idCardPicksOnly(); aliasFlow(); addBreakdownLink(); aliasTab(); d1Tabs(); d1Fwd(); homeRisk(); d1jMark(); flatAll(); fwdOut(); folderList(); pinButton(); faqTop(); othBankRow(); vaultQ(); vaultFoldBtn(); avTxTab(); if (AVTX) avTxApply(); addKeywordHint(); labelGroupButton(); addFolderTag(); vaultToggle(); mountOnb(); vaultTray(); mintify(); idDetailFlat(); openSpin(); aliasPageTitle(); wfStart(); idIntroArt(); fitMarks();
   }
 
   /* ═════════ review overlay: ring what changed ═════════ */
