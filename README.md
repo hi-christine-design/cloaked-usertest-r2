@@ -5,16 +5,31 @@ Open **index.html**. Left: the checklist. Middle: the prototype. Right: one slid
 rings what changed. Use **Before / After** to flip between the build as tested and this build,
 and the **Rename to** toggle to compare Alias / Identity / Profile. Layout follows Figma Identity—WIP 9473:52370; the controls (Build, Rename to, Before / After, prev / next, Show again) reuse its selection-pill style.
 
+## Files at a glance (renamed 26 Oct 2026)
+
+| file / folder | what it is |
+|---|---|
+| `index.html` | desktop launcher: checklist, phone, change slides |
+| `mobile.html` | phone launcher (was `m.html`) |
+| `mobile-preview-day01.jpg`, `mobile-preview-day30.jpg` | thumbnails on the phone launcher (were `m-dayone.jpg`, `m-day30.jpg`) |
+| `prototype/` | the app build, Day 01 + Day 30, with the round-2 layer in `prototype/ut2/` (was `V2/`) |
+| `assets/` | launcher icons |
+| `manifest.webmanifest`, `vercel.json` | home-screen app + Vercel settings (names must stay) |
+| `_reference/` | files not used by the site (`identity-intro.gif`) — not deployed |
+| `_backup/` | zip of this folder before the rename — not deployed |
+
+Code comments inside `prototype/` still say `V2/…`; that is the old name of the same folder.
+
 ## What's here
 
 ```
 index.html            launcher (Figma 9566:69873, 19 Oct: left = title + controls at the foot — Build · Tabs (2 Tabs | 1 Tab (Toggle)); 20 Oct: no Naming or Onboarding controls — the name follows Tabs (2 Tabs = Identity, 1 Tab = Folder) and the Vault intro is always the banner; middle = phone; right = Checklist (20 Oct: grouped into conversation points — 01 Rename “ID card” · 02 Make aliases clear · 03 More guidance · 04 Faster creation · Things we didn't change (Risk level) · Still open; each group has its research line, rows have no numbers; GROUPS in index.html), the picked row opens into Where · Before|After · Why · Note · Show again; all text 10px; ←/→ and Esc still work)
 assets/launcher/      check.svg from the Figma frame
-V2/                   copy of UserTest/V2 (Day30 + DayOne), originals untouched
+prototype/            copy of UserTest/V2 (Day30 + DayOne), originals untouched
   ut2/ut2.js          the round-2 changes, as one layer on top of the build
   ut2/ut2.css
-  Day30/app.html      = V2 + two lines that load ut2 (src/130-family-day30-data.html, rebuilt with build-app.py)
-  DayOne/app.html     = V2 + the same two lines, just above the BADGE block
+  Day30/app.html      = the tested build + two lines that load ut2 (src/130-family-day30-data.html, rebuilt with build-app.py)
+  DayOne/app.html     = the tested build + the same two lines, just above the BADGE block
 D2-explore/           unchanged
 ```
 
@@ -22,7 +37,7 @@ D2-explore/           unchanged
 
 - `?ut2=after` (default) applies the changes. `?ut2=before` is V2 exactly as it was tested.
 - `?ut2name=identity|folder` sets what "ID card" is called (default identity; the launcher sends folder with 1 Tab (Toggle) and identity with 2 Tabs unless Naming is picked by hand).
-- `?ut2cards=tab|toggle` (default tab). toggle = no ID card tab; the Vault and the ID card wallet share a floating "Items | Folders" toggle (Figma 9561:65816 light glass pill — was dark 9542:53109 — bottom-left beside the +; on scroll-down (build's body.nav-down) it slides 56 down to 40 from the foot, Figma 9561:66347; icons exported to V2/ut2/icons/). Same frame for the Vault screen in toggle mode: “Vaults” header + tab bar, search “ID Cards, Logins, Phone…”, tabs All · ID cards (→ Folders) · Login · Phone · Email (+ Payment / Bank when present; Day 1 shows the strip in toggle mode; the Vault one-line sub is hidden in toggle mode). Folders empty state (Figma 9564:67265): “My ID cards” + “?”, bordered card “Start grouping your vault items” / “+ Create a new folder” → icOpenCreate(); no + fab or count row; once an ID card exists the build’s wallet shows, with “+ Create a new folder” (56 r240, 12 under the stack, Figma 9566:68966) instead of the + fab, and no ⓘ / sub line and the Vault tab stays lit (after mode only). The launcher's "Tabs" control (2 Tabs = tab, 1 Tab (Toggle) = toggle) sets it for every slide; slide 19 always opens toggle.
+- `?ut2cards=tab|toggle` (default tab). toggle = no ID card tab; the Vault and the ID card wallet share a floating "Items | Folders" toggle (Figma 9561:65816 light glass pill — was dark 9542:53109 — bottom-left beside the +; on scroll-down (build's body.nav-down) it slides 56 down to 40 from the foot, Figma 9561:66347; icons exported to prototype/ut2/icons/). Same frame for the Vault screen in toggle mode: “Vaults” header + tab bar, search “ID Cards, Logins, Phone…”, tabs All · ID cards (→ Folders) · Login · Phone · Email (+ Payment / Bank when present; Day 1 shows the strip in toggle mode; the Vault one-line sub is hidden in toggle mode). Folders empty state (Figma 9564:67265): “My ID cards” + “?”, bordered card “Start grouping your vault items” / “+ Create a new folder” → icOpenCreate(); no + fab or count row; once an ID card exists the build’s wallet shows, with “+ Create a new folder” (56 r240, 12 under the stack, Figma 9566:68966) instead of the + fab, and no ⓘ / sub line and the Vault tab stays lit (after mode only). The launcher's "Tabs" control (2 Tabs = tab, 1 Tab (Toggle) = toggle) sets it for every slide; slide 19 always opens toggle.
 - `?ut2intro=outside|inside|first` — Day 01 Vault intro. Default is `outside` (the fallback in `ut2.js`; the launcher always sends `outside`). `banner` is read as `inside` (behind the “What’s vault” card). `first` opens the intro first.
 - `?ut2go=c1…c4, c6, c7, v07…v10, v14, t11, t13, t19, v20, v21, v22` opens the screen for that change and draws the review ring.
 - Nothing in the build's own code was edited. Remove the two `UT2` lines to get V2 back.
@@ -38,7 +53,7 @@ recommendation, not from what members said in the sessions.
 | c2 | One vocabulary + a line under each section title | Vault, ID card tab, Day 1 search |
 | c3 | "Generate" leads — after: no Email/Phone tray; "Hide my info" leads "Add an item" (covered by c6) | Vault › + |
 | c4 | Your own info kept apart — after: "Contact" is its own row in "Add an item" (covered by c6) | Vault › + |
-| c6 | "Add an item" as a list (Figma 9546:61073): Create alias (dark; 20 Oct, was Hide my info → it runs the build's ID card create flow #icCreate as an alias flow: “What is this alias for?” → “Suggested aliases” (RECOMMENDED / OTHERS checklist) → Day 30's personalize page → “Creating your aliases now…” at full mint speed → ready → Done files each alias into the Vault with window.vtAddMade and makes no ID card; ut2.js aliasFlow / finishAlias, html.ut2-iccalias) · Contact (sheet: own Email / Phone) · Password · Payment card · Bank account · Others · Import pill. Rows drive the build's hidden tiles; trays are taken without showing (.ut2-autopick). Icons in V2/ut2/icons/add-*.svg | Vault › + |
+| c6 | "Add an item" as a list (Figma 9546:61073): Create alias (dark; 20 Oct, was Hide my info → it runs the build's ID card create flow #icCreate as an alias flow: “What is this alias for?” → “Suggested aliases” (RECOMMENDED / OTHERS checklist) → Day 30's personalize page → “Creating your aliases now…” at full mint speed → ready → Done files each alias into the Vault with window.vtAddMade and makes no ID card; ut2.js aliasFlow / finishAlias, html.ut2-iccalias) · Contact (sheet: own Email / Phone) · Password · Payment card · Bank account · Others · Import pill. Rows drive the build's hidden tiles; trays are taken without showing (.ut2-autopick). Icons in prototype/ut2/icons/add-*.svg | Vault › + |
 | c7 | "How it works" sheet on a new alias's own page (Figma 9561:65463: dark round icons, one-line rows, 56px Got it) | Vault › + › Generate an alias › Create |
 | v07 | "Alias" tag on alias rows only (Figma 9544:56508: 19px pill, #141410, white-10% stroke, 10px #F3F1ED, 4px gap); your own info has no tag (Yours dropped 19 Oct) | Vault (Day 30) |
 | v08 | "Forwards to …" under every alias email and phone (Day 30) | Vault |
@@ -162,7 +177,7 @@ A copy of UserTest_V2 that keeps only 2 Tabs: the launcher has no Tabs or Tab na
 - *Opening from the list:* tapping a Vault row spins the row's own avatar (700ms) while the page opens; an icon alias / own item reverses its two colours on the back, a logo or photo only turns. The page's avatar then does its own spin as before.
 - *Identity cards:* the orange identity card is mint (#8ecfc1, identities palette) everywhere — the wallet, Home, the flyer and the identity page (`mintify()`); opening Hide my info no longer flashes a black card first (the fly layer's dark face is hidden).
 - *Forward to on the detail page* follows the form: an email alias created with forwarding on shows On there too.
-- Deployed on GitHub Pages: https://hi-christine-design.github.io/cloaked-usertest-2tabs/ (repo hi-christine-design/cloaked-usertest-2tabs; push the folder minus `.git`, `D2-explore`, `V2/Day30/src`, with `.nojekyll`).
+- Deployed on GitHub Pages: https://hi-christine-design.github.io/cloaked-usertest-2tabs/ (repo hi-christine-design/cloaked-usertest-2tabs; push the folder minus `.git`, `D2-explore`, `prototype/Day30/src`, with `.nojekyll`).
 
 **21 Oct, round 8 (Figma 9714:76249):**
 - *Start page (`m.html`):* the cards are still thumbnails now — `m-dayone.jpg` (Day 01's “Welcome to Cloaked Margaret”) and `m-day30.jpg` (Day 30 Home) — no live builds, no motion. Labels “Day 01” / “Day 30”.
@@ -174,9 +189,9 @@ A copy of UserTest_V2 that keeps only 2 Tabs: the launcher has no Tabs or Tab na
 
 **21 Oct, round 10 (Figma 9734:108452 · 9734:107810):**
 - *Day 01 “start here” (ONB-03):* the step after the welcome is the Figma card — art, **Hide me with identity alias** / Peace in 5 mins, a **Get started →** row — with one black **Later** 24 under it (no Create button). Get started opens Create a new identity; Later collapses the card into Home as before. The Figma art is a video fill that can't be exported here, so the card draws its frame live (a glowing disc behind Nike · Google · Walmart · Apple · Zillow · Lyft · Airbnb · Target, each “usersmail@gmail.com”, using the build's logos). On a short screen the card gives up height (fewer rows) so Later is never cut off. ut2.js `wfStart()`, ut2.css `html.ut2-wf3`.
-- *Day 01 Vault tray:* the first time the Vault opens, a tray slides up over a dim: a mini Vault (Passwords · Phone · Card · Email · Work, icons exported from Figma to `V2/ut2/img/vt-*.svg`), “A password manager that protects all of you”, one line, **Learn more** (opens the Vault intro). A tap outside closes it. It replaces the in-list “What's vault” card. ut2.js `vaultTray()`, ut2.css `.ut2-vt3`.
+- *Day 01 Vault tray:* the first time the Vault opens, a tray slides up over a dim: a mini Vault (Passwords · Phone · Card · Email · Work, icons exported from Figma to `prototype/ut2/img/vt-*.svg`), “A password manager that protects all of you”, one line, **Learn more** (opens the Vault intro). A tap outside closes it. It replaces the in-list “What's vault” card. ut2.js `vaultTray()`, ut2.css `.ut2-vt3`.
 - *Press D (desktop):* shows the name of the page on screen at the top of the phone for 4 seconds and copies it, e.g. `Day 30 · Vault › Vault item — “Home” [#vaultsScreen #vtL3]` or `Day 01 · Create identity · What is it for (step 1)`. Works in the launcher (forwarded to the build) and in a build opened on its own; ignored while typing in a field. ut2.js `pageName()` / `showPageName()`.
-- *Home Screen app (r11):* `manifest.webmanifest` (scope `./`, start `m.html`, standalone, icon `V2/ut2/img/app-icon-*.png`) is linked from `m.html` and `index.html`. Added to the Home Screen from the start page, the whole site is one app, so moving into Day 01 / Day 30 or back to the start page stays full screen; without it iOS treated those pages as outside the app and opened them in its in-app browser (X + toolbar). Re-add the icon from the start page after this change. The builds still have no manifest (on purpose, see their head).
+- *Home Screen app (r11):* `manifest.webmanifest` (scope `./`, start `m.html`, standalone, icon `prototype/ut2/img/app-icon-*.png`) is linked from `m.html` and `index.html`. Added to the Home Screen from the start page, the whole site is one app, so moving into Day 01 / Day 30 or back to the start page stays full screen; without it iOS treated those pages as outside the app and opened them in its in-app browser (X + toolbar). Re-add the icon from the start page after this change. The builds still have no manifest (on purpose, see their head).
 - *Home Screen height (r12):* opened from the Home Screen (standalone) the overlay no longer sizes the frame — iOS can report the height without the status bar there, which left a ~60pt band under the tab bar. The build's own 100vh (the whole screen) applies; the visible-height fit is only for a browser tab.
 - *Start-here card art (r13):* the card's art is now the motion from `intro-v1-descriptive-short.html` (the asset behind the Figma video), ported into ut2.js `wfArt()`: a breathing orb whose palette drifts every 7s (canvas, grain, centre/radius from the Figma frame), and the eight site rows where usersmail@gmail.com morphs letter by letter into a cloaked address while each logo turns into the orange cloaked mark, top row first, holds, then all turn back. Runs only while the card is on screen.
 
@@ -247,7 +262,7 @@ A copy of UserTest_V2 that keeps only 2 Tabs: the launcher has no Tabs or Tab na
 - *After Save:* no lock. The new item's icon on its page turns over the same way (its reversed face), holds a moment and turns back — "it's protected". An alias brand logo (e.g. Hinge) now reverses too, and a brand logo shows on the page (it came up empty before).
 
 **22 Oct, round 29 — Identity is V3's (Yuan), whole:**
-- *Identity tab (Day 01 + Day 30):* list, intro (tray "One identity for each part of your life" → Learn more page → Create identity), create flow, identity page and Edit are V3's own, loaded on top of the build (`V2/ut2/v3id1.*`, `v3id30.*`, made by `port/`). Tab bar says **Identity**. Our own Identities layers from rounds 21–27 (story slides, how-to tray, our create flow, the flat identity page, mint cards) stand down; r28 as it was is `../R1` (04_UserTest_V2/R1). `&ut2v3id=0` brings ours back.
+- *Identity tab (Day 01 + Day 30):* list, intro (tray "One identity for each part of your life" → Learn more page → Create identity), create flow, identity page and Edit are V3's own, loaded on top of the build (`prototype/ut2/v3id1.*`, `v3id30.*`, made by `port/`). Tab bar says **Identity**. Our own Identities layers from rounds 21–27 (story slides, how-to tray, our create flow, the flat identity page, mint cards) stand down; r28 as it was is `../R1` (04_UserTest_V2/R1). `&ut2v3id=0` brings ours back.
 - *Start-here card (Day 01, Figma 9822:114546):* "Use unique identity to hide your real one" / Peace in 5 mins / Get started. The art is V3's identity cards in three beats, looping: the Primary identity alone → Hide my info rises over it → Business identity and Cancun trip stack on → they slip back.
 - Home's "Create alias identity" lands on the Identity tab (V3's tray greets the first visit).
 
@@ -263,7 +278,7 @@ A copy of UserTest_V2 that keeps only 2 Tabs: the launcher has no Tabs or Tab na
 
 **22 Oct, round 33 — launcher: Vault onboarding V1 / V2:**
 - The right panel has a second tab, **Vault onboarding**. **V1 · Current** is ours (black tray → intro page with the two WIP cards, Figma 9822:113803). **V2 · V3 build (Yuan)** is the Vault intro from `03_UserTest_V1/V3`: the "Meet your smart vault" tray with the ring of logos → Learn more → One vault for everything that's yours online · Sign up without giving away your real info · Stay private when you meet new people · A virtual card for subscriptions · Get started. Tapping a row opens the Vault with that tray already up (both days); the pick stays for the rest of the prototype (the Vault's ? opens that version's page).
-- V2 is loaded on top of the build (`V2/ut2/v3vonb1.*`, `v3vonb30.*`, made by `port/genvonb.py`; URL `&ut2vonb=2`). No tab bar over either version.
+- V2 is loaded on top of the build (`prototype/ut2/v3vonb1.*`, `v3vonb30.*`, made by `port/genvonb.py`; URL `&ut2vonb=2`). No tab bar over either version.
 
 **22 Oct, round 34:** the start-here card's button reads **Learn more** (was Get started). It goes to the Identity tab and opens V3's Identity intro page over it ("One you. As many identities as life needs." · scroll to explore · Create identity); × lands on the Identity wallet.
 
@@ -277,7 +292,7 @@ A copy of UserTest_V2 that keeps only 2 Tabs: the launcher has no Tabs or Tab na
 
 **22 Oct, round 39:** Digital risk. Each identity card says **Digital risk: Good** (or High) where it counted its items, on the wallet, the open card, the create flow and the intro's sample cards; Home's start-here cards too. Home's "Risk level" tile is now **Digital risk**. Why: Home already has Digital risk, so people can read the card's from there. The Checklist's "Risk level" moves from "Things we didn't change" to 03 More guidance as "Digital risk on each identity". (port/patch_icc.py patch_markup + 3 patches → v3id1/v3id30.js; ut2.js homeRisk().)
 
-**23 Oct, round 40:** Vault onboarding V2 (Figma 9890:138727). The launcher's "Vault onboarding" tab is back: **V1 · V3 build (Yuan)** (default) and **V2 · Scroll story**. V2 keeps Yuan's tray; its Learn more (and the Vault's ?) opens one page with three scroll stops, each playing once you land on it (V3's rule and curve): *A password manager that protects all of you* (+ → Phone, Email, Card, Passwords, Address → your items → the list scrolls → three) · *Share an alias, not your real info* (aliases slide over the real three) · *Calls, messages, emails, transactions all happen here* (one alias on top, a dotted thread, what reaches it — phone → email → card, looping). Get started → the create page. Files: V2/ut2/vonbn.js + vonbn.css, loaded by ut2.js with `&ut2vonb=n`. The background glow is CSS (the Figma image couldn't be exported). Copy fixes from the Figma: "Bank of America", "Instagram login", "Your account is activated!", "We just launched a new version today!"; Casa del Mar's avatar is "C"; card rows read .3802 (the card alias).
+**23 Oct, round 40:** Vault onboarding V2 (Figma 9890:138727). The launcher's "Vault onboarding" tab is back: **V1 · V3 build (Yuan)** (default) and **V2 · Scroll story**. V2 keeps Yuan's tray; its Learn more (and the Vault's ?) opens one page with three scroll stops, each playing once you land on it (V3's rule and curve): *A password manager that protects all of you* (+ → Phone, Email, Card, Passwords, Address → your items → the list scrolls → three) · *Share an alias, not your real info* (aliases slide over the real three) · *Calls, messages, emails, transactions all happen here* (one alias on top, a dotted thread, what reaches it — phone → email → card, looping). Get started → the create page. Files: prototype/ut2/vonbn.js + vonbn.css, loaded by ut2.js with `&ut2vonb=n`. The background glow is CSS (the Figma image couldn't be exported). Copy fixes from the Figma: "Bank of America", "Instagram login", "Your account is activated!", "We just launched a new version today!"; Casa del Mar's avatar is "C"; card rows read .3802 (the card alias).
 
 **23 Oct, round 41:** Vault onboarding **V2.2 · Scroll pages** (`&ut2vonb=n2`): the same three scenes, scrolled like Yuan's V1 — each scene is its own page, its title and art come up as you scroll, and the art plays once the page lands (pages you leave wait in their starting pose and replay when you come back). Passing pages fade out under the bar and above Get started. The earlier one is now **V2.1 · Scroll story** (title and art stay put). Same files (vonbn.js / vonbn.css).
 

@@ -9,13 +9,13 @@
      the Day 01 / Day 30 builds and the start page are all inside its scope, so iOS keeps
      them full screen instead of opening them in its in-app browser (X + toolbar). -->
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="V2/ut2/img/app-icon-180.png">
+<link rel="apple-touch-icon" href="prototype/ut2/img/app-icon-180.png">
 <meta name="apple-mobile-web-app-title" content="Cloaked UT">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Identity Round 2 · Start</title>
 <!-- Christine, 21 Oct (Figma 9714:69420 → 9714:76249): the start page on a phone.
      Two cards, Day 01 and Day 30, each a still thumbnail of the build's first
-     screen (m-dayone.jpg / m-day30.jpg — no live preview, no motion); a tap opens
+     screen (mobile-preview-day01.jpg / mobile-preview-day30.jpg — no live preview, no motion); a tap opens
      the build full screen. Inside a build, a two-finger long press anywhere
      comes straight back here (ut2.js).
      The 393x852 frame is scaled to the viewport so the layout reads as drawn. -->
@@ -49,7 +49,7 @@
      does not hide Day 01's welcome. intro=0 is what skips it, and this page
      never sends it. ut2m=1 is only the phone's two-finger menu. */
   var Q = '?skip=1&tab=home&ut2=after&ut2name=identity&ut2cards=tab&ut2intro=outside&ut2m=1&v=' + V;
-  var URL = { DayOne: 'V2/DayOne/app.html' + Q, Day30: 'V2/Day30/app.html' + Q };
+  var URL = { DayOne: 'prototype/DayOne/app.html' + Q, Day30: 'prototype/Day30/app.html' + Q };
   function fit() {
     var s = Math.min(innerWidth / 393, innerHeight / 852);
     var f = document.getElementById('frame');
@@ -57,8 +57,8 @@
   }
   fit(); addEventListener('resize', fit); addEventListener('orientationchange', fit);
   /* stills of each build's first screen (Day 01: its welcome; Day 30: Home) */
-  document.getElementById('pv1').src = 'm-dayone.jpg?v=' + V;
-  document.getElementById('pv30').src = 'm-day30.jpg?v=' + V;
+  document.getElementById('pv1').src = 'mobile-preview-day01.jpg?v=' + V;
+  document.getElementById('pv30').src = 'mobile-preview-day30.jpg?v=' + V;
   document.addEventListener('click', function (e) {
     var c = e.target.closest && e.target.closest('.card[data-go]'); if (!c) return;
     location.href = URL[c.dataset.go];

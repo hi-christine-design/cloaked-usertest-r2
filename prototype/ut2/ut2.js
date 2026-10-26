@@ -3742,7 +3742,7 @@
     if (own && visible(own) && own.textContent.trim()) return;
     hero.appendChild(el('<div class="ut2-l3t ut2-noren">' + esc(t) + '</div>'));
   }
-  /* ═══ Christine, 21 Oct — on a phone (m.html): a two-finger long press
+  /* ═══ Christine, 21 Oct — on a phone (mobile.html): a two-finger long press
      anywhere opens the menu — Day 01 (onboarding) · Day 30 · Start page ═══ */
   /* ═══ Christine, 21 Oct — press D (desktop) to show the name of the page on
      screen, so QA notes can say which page they mean. The page is read from
@@ -3925,7 +3925,7 @@
     t.querySelector('.dim').addEventListener('click', close);
     t.addEventListener('click', function (e) {
       var b = e.target.closest('.mrow'); if (!b) return;
-      if (b.dataset.home) location.href = '../../m.html';
+      if (b.dataset.home) location.href = '../../mobile.html';
       else location.href = menuURL(b.dataset.day);
     });
   }
@@ -3935,7 +3935,7 @@
     document.addEventListener('touchstart', function (e) {
       if (e.touches.length !== 2) { cancel(); return; }
       x0 = (e.touches[0].clientX + e.touches[1].clientX) / 2; y0 = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-      cancel(); tm = setTimeout(function () { tm = null; if (MOBILE) location.href = '../../m.html'; else openMenu(); }, 650);   /* Christine, 21 Oct: on a phone it goes straight back to the start page */
+      cancel(); tm = setTimeout(function () { tm = null; if (MOBILE) location.href = '../../mobile.html'; else openMenu(); }, 650);   /* Christine, 21 Oct: on a phone it goes straight back to the start page */
     }, { passive: true });
     document.addEventListener('touchmove', function (e) {
       if (!tm || e.touches.length !== 2) return;

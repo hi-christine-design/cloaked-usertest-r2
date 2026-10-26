@@ -7,14 +7,14 @@
      the Day 01 / Day 30 builds and the start page are all inside its scope, so iOS keeps
      them full screen instead of opening them in its in-app browser (X + toolbar). -->
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="V2/ut2/img/app-icon-180.png">
+<link rel="apple-touch-icon" href="prototype/ut2/img/app-icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Cloaked UT">
 <script>
 /* Christine, 21 Oct: on a phone the launcher's three columns don't fit — the
-   start page (m.html, Figma 9714:69420) takes over. ?desktop=1 keeps this one. */
-(function () { try { if (Math.min(screen.width, innerWidth) < 760 && !/[?&]desktop=1/.test(location.search)) location.replace('m.html' + location.search + location.hash); } catch (e) {} })();
+   start page (mobile.html, Figma 9714:69420) takes over. ?desktop=1 keeps this one. */
+(function () { try { if (Math.min(screen.width, innerWidth) < 760 && !/[?&]desktop=1/.test(location.search)) location.replace('mobile.html' + location.search + location.hash); } catch (e) {} })();
 </script>
 <title>Identity Round 2</title>
 <style>
@@ -448,7 +448,7 @@ $('rtabs').addEventListener('click', function (e) {
 });
 /* the Vault, its onboarding raised at once (ut2vonbgo) */
 function loadVonb() {
-  frame.src = 'V2/' + S.day + '/app.html?skip=1&tab=vaults' + (S.day === 'DayOne' ? '&intro=0' : '') +
+  frame.src = 'prototype/' + S.day + '/app.html?skip=1&tab=vaults' + (S.day === 'DayOne' ? '&intro=0' : '') +
     '&ut2=after&ut2name=' + UT2_NAME + '&ut2cards=' + UT2_CARDS + '&ut2intro=' + UT2_INTRO + '&ut2vonb=' + S.vonb + '&ut2vonbgo=1&v=20261023-ut144';
   loading.textContent = 'Opening the Vault onboarding…';
   loading.classList.add('on');
@@ -527,7 +527,7 @@ var hideT;
 function load() {
   var s = curS();
   if (!s) {   /* nothing picked: the plain prototype, home, no ring */
-    frame.src = 'V2/' + S.day + '/app.html?skip=1&tab=home' + introQ(S.day) +
+    frame.src = 'prototype/' + S.day + '/app.html?skip=1&tab=home' + introQ(S.day) +
       '&ut2=after&ut2name=' + UT2_NAME + '&ut2cards=' + UT2_CARDS + '&ut2intro=' + UT2_INTRO + '&ut2vonb=' + S.vonb + '&v=20261023-ut144';
     loading.textContent = 'Opening the prototype…';
     loading.classList.add('on');
@@ -535,7 +535,7 @@ function load() {
     return;
   }
   var day = s.day || S.day;   /* some changes only exist on one day */
-  frame.src = 'V2/' + day + '/app.html?skip=1&tab=' + (TABS[s.id] || s.tab || 'home') +
+  frame.src = 'prototype/' + day + '/app.html?skip=1&tab=' + (TABS[s.id] || s.tab || 'home') +
     introQ(day) +
     '&ut2=' + (s.done ? S.mode : 'after') + '&ut2name=' + UT2_NAME +
     '&ut2cards=' + UT2_CARDS + '&ut2intro=' + UT2_INTRO +
