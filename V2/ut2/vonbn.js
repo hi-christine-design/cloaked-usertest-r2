@@ -97,8 +97,11 @@
   /* round 51 (Christine): V2.2 = &ut2vonb=n3 — no + and no kinds: the list of your things with their logos from the start,
      and no "Save them here" page (straight on to the alias). The four-page story above is now V2.1 (&ut2vonb=n2). */
   var LOGOS = true;   /* round 55 (Christine): V2.1 retired — n, n2 and n3 all open the logos-first V2; the four-page path stays below, unused */
-  if (PAGED) COPY = LOGOS ? [COPY[0], COPY[1], COPY[2]] : [COPY[0], '<h1>Keep it all here, ready when you need it</h1>', COPY[1], COPY[2]];
-  var KIND = LOGOS ? [1, 2, 3] : [0, 1, 2, 3];   /* page → its art's pose */
+  /* round 81 (Christine: the activity page was too long to wait for): one page per kind — the noun and the art change, "all in one place" stays on the second line */
+  var PAGEK = [null, null, 'phone', 'email', 'card'];
+  if (PAGED && LOGOS) COPY = [COPY[0], COPY[1], '<h1>Calls and messages<br>all in one place</h1>', '<h1>Emails<br>all in one place</h1>', '<h1>Payments<br>all in one place</h1>'];
+  else if (PAGED) COPY = LOGOS ? [COPY[0], COPY[1], COPY[2]] : [COPY[0], '<h1>Keep it all here, ready when you need it</h1>', COPY[1], COPY[2]];
+  var KIND = LOGOS ? [1, 2, 3, 3, 3] : [0, 1, 2, 3];   /* page → its art's pose */
   var NS = COPY.length, LAST = NS - 1;
   var ART = '<div class="vtn-art">' +
       '<div class="vtn-fab">' + FAB + '</div>' +
@@ -229,7 +232,16 @@
     at(1100 + d, function () { next(3200); });
   }
   /* V2.2 poses and the two halves of the first scene */
-  function poseP(A, j, rest) { poseK(A, KIND[j], rest); }
+  function poseP(A, j, rest) { poseK(A, KIND[j], rest); if (LOGOS && PAGEK[j]) headOf(A, PAGEK[j]); }
+  function headOf(A, kk) { ['phone', 'email', 'card'].forEach(function (k) { set(A.heads[k], { opacity: k === kk ? 1 : 0, transform: 'none' }); }); flush(); }
+  /* round 81: a kind's page — its alias on top, the line draws, its three arrive; once, and they stay */
+  function pAct(kk) {
+    return function (A) {
+      poseK(A, 3); headOf(A, kk);
+      at(150, function () { to(A.line, { transform: 'scaleY(1)' }, 420); });
+      A.acts[kk].forEach(function (r, i) { at(420, function () { to(r, { opacity: 1, transform: 'none' }, 520, EZ, i * 140); }); });
+    };
+  }
   function poseK(A, k, rest) {
     set(A.el, { opacity: 1 });
     reset(A, -1);
@@ -310,7 +322,7 @@
     page.classList.toggle('s2', k === LAST);
     /* V2.2: the pages you are not on wait in their starting pose, so scrolling to one shows it ready */
     if (PAGED) ARTS.forEach(function (A, j) { if (j !== k) poseP(A, j, true); });
-    (PAGED ? (LOGOS ? [pItems, loopP(1, pAlias, 4400), pCalls] : [pKinds, pItems, loopP(2, pAlias, 4400), pCalls]) : [play0, play1, play2])[k](artOf(k));
+    (PAGED ? (LOGOS ? [pItems, loopP(1, pAlias, 4400), pAct('phone'), pAct('email'), pAct('card')] : [pKinds, pItems, loopP(2, pAlias, 4400), pCalls]) : [play0, play1, play2])[k](artOf(k));
   }
   scroller.addEventListener('scroll', function () {
     clearTimeout(settle);
@@ -372,7 +384,7 @@
     }
     if (ring) ring.parentNode.insertBefore(art, ring); else tray.insertBefore(art, tray.querySelector('.vti-cta'));
     if (!LOGOS) return;
-    var TS = 68, TMID = 28 + 2 * TS, rows = [].slice.call(art.querySelectorAll('.vtn-row')), N = rows.length, tf = 2, tt = 0;
+    var TS = 76, TMID = 28 + 2 * TS,   /* round 80: bigger rows (title 16px, as the button) */ rows = [].slice.call(art.querySelectorAll('.vtn-row')), N = rows.length, tf = 2, tt = 0;
     function tPose(animate) {
       rows.forEach(function (r, i) {
         var rel = ((i - tf) % N + N) % N; if (rel > N / 2) rel -= N;
@@ -394,6 +406,15 @@
     tPose(false);
     new MutationObserver(tSync).observe(trayW, { attributes: true, attributeFilter: ['class'] });
     tSync();
+    /* round 80 (Christine): the light glow behind the tray moves — the page's breathing orb (Yuan's drawOrb) */
+    var tcv = document.createElement('canvas'); tcv.className = 'vtn-torb'; tcv.setAttribute('aria-hidden', 'true');
+    tray.insertBefore(tcv, tray.firstChild);
+    var tId = 0;
+    function tOrb(ts) { tId = 0; if (!trayW.classList.contains('on') || typeof window.vtiOrbDraw !== 'function') return; window.vtiOrbDraw(tcv, ts); if (!still) tId = requestAnimationFrame(tOrb); }
+    new MutationObserver(function () {
+      if (trayW.classList.contains('on') && typeof window.vtiOrbDraw === 'function') { tray.classList.add('orb'); if (!tId) tId = requestAnimationFrame(tOrb); }
+    }).observe(trayW, { attributes: true, attributeFilter: ['class'] });
+    if (trayW.classList.contains('on') && typeof window.vtiOrbDraw === 'function') { tray.classList.add('orb'); tId = requestAnimationFrame(tOrb); }
   })();
   window.vtIntroOpen = open; window.vtIntroClose = function () { close(false); }; window.vtIntroStart = function () { Q('.vtn-cta').click(); };
   window.UT2_VTN = 1;

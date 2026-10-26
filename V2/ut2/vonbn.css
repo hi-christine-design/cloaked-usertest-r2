@@ -139,3 +139,20 @@
 .vti-tray.vtn-tray .vti-cta { position: relative; z-index: 2; }
 /* round 74 (Christine): the "Share an alias" page's three alias cards sit 20px higher */
 .vtn.paged .vtn-scroll > section:nth-of-type(2) .vtn-art { top: calc(284px + var(--o)); }
+/* round 79 (Christine): FAQs as V1 has them — a short tail, the last cards 40px above Get started (CTA top = 34 + 56 + 40 from the foot) */
+.vtn.paged .vtn-scroll > section.vtn-faqsec { height: auto; padding: 24px 0 calc(130px + var(--sab, 0px)); }
+.vtn-faqsec .vtn-faq { position: static; }
+
+/* round 80 (Christine): the tray's glow in motion (the page orb, drawn on .vtn-torb), and bigger rows — title 16px like the button */
+.vtn-torb { position: absolute; left: 0; right: 0; top: 0; width: 100%; height: 62%; z-index: 0; pointer-events: none; filter: blur(14px); transform: scale(1.06); display: none;
+  -webkit-mask: linear-gradient(180deg, #000 55%, transparent 100%); mask: linear-gradient(180deg, #000 55%, transparent 100%); }   /* the glow stays in the top half, as the still gradient did, so the rows sit on dark */
+.vti-tray.vtn-tray.orb { background: #141410; }
+.vti-tray.vtn-tray.orb .vtn-torb { display: block; }
+.vti-tray.vtn-tray > :not(.vtn-torb) { position: relative; z-index: 1; }
+.vtn-tray.car .vtn-tart { height: 360px; }
+.vtn-tray.car .vtn-tin { height: 420px; margin-top: -210px; transform: none; }
+.vtn-tray.car .vtn-tart .vtn-row { top: calc(28px + var(--i) * 76px); height: 68px; }
+.vtn-tray.car .vtn-in { gap: 12px; padding: 0 18px; }
+.vtn-tray.car .vtn-av { width: 40px; height: 40px; }
+.vtn-tray.car .vtn-tx b { font-size: 16px; letter-spacing: -.32px; }
+.vtn-tray.car .vtn-tx i { font-size: 14px; letter-spacing: -.28px; }
