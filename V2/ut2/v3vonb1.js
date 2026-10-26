@@ -136,6 +136,32 @@
   var HILITE = '#f3f1ed';
   var NAME = { phone: 'Phone', email: 'Email', card: 'Payment card', address: 'Address', login: 'Login', bank: 'Bank account',
                vcard: 'Virtual card', phoneA: 'Phone alias', emailA: 'Email alias' };   /* CP-1 */
+  /* round 83 (Christine, hand-edited after port/genvonb.py — re-apply if regenerated): a brand mark no longer always reads "Login"; its label rotates through the vault's kinds */
+  /* round 93 (Christine): each brand's label matches what it is — a carrier reads Phone, a bank reads Payment card, Gmail reads Email, the rest are logins */
+  (function () {
+    var att = im('AT&T.svg'), chase = new Image(); chase.src = 'assets/logo/Chase.svg';
+    var ci = -1, pi = -1; MARKS.forEach(function (m, i) { if (m.k === 'card' && ci < 0) ci = i; if (m.k === 'phone' && pi < 0) pi = i; });
+    if (ci >= 0) MARKS.splice(ci + 1, 0, { im: chase, l: 'Payment card' });
+    if (pi >= 0) MARKS.splice(pi + 1, 0, { im: att, l: 'Phone' });
+  })();
+  /* round 94 (Christine): the selector walks Login → Phone → Email → Card → Address, over and over, each label still true to its mark */
+  (function () {
+    function f(m) { return m.k || decodeURIComponent((m.im && m.im.src || '').split('/').pop()); }
+    var by = {}; MARKS.forEach(function (m) { by[f(m)] = m; });
+    var att = MARKS.filter(function (m) { return /AT&T|AT%26T/.test(m.im && m.im.src || ''); })[0];
+    if (by['Zillow.svg']) by['Zillow.svg'].l = 'Address';
+    var ORDER = [
+      ['Instagram.svg', 'Verizon.png', 'Google.svg', 'Chase.svg', 'address'],
+      ['Facebook.png', 'phone', 'email', 'card', 'Zillow.svg'],
+      ['Apple.svg', att, 'emailA', 'vcard'],
+      ['Spotify.png', 'phoneA', 'bank']
+    ];
+    var out = [];
+    ORDER.forEach(function (row) { row.forEach(function (k) { var m = typeof k === 'string' ? by[k] : k; if (m && out.indexOf(m) < 0) out.push(m); }); });
+    if (out.length >= 12) { MARKS.length = 0; out.forEach(function (m) { MARKS.push(m); }); }
+  })();
+  var LBL = { 'Google.svg': 'Email', 'Verizon.png': 'Phone', 'AT%26T.svg': 'Phone', 'Chase.svg': 'Payment card' };
+  MARKS.forEach(function (m) { if (!m.k && !m.l) { var f = decodeURIComponent((m.im && m.im.src || '').split('/').pop()); m.l = LBL[f] || LBL[encodeURIComponent(f)] || 'Login'; } });
   function Ring(cv) { this.cv = cv; this.reset(); }
   Ring.prototype.reset = function () { this.intro = still ? 4 : 0; this.rot = 0; this.sel = -1; this.selT = 0; this.selA = []; this.last = 0; this.W = this.H = 0; this.label = ''; this.labelT = 0; };
   Ring.prototype.frame = function (now) {
@@ -148,7 +174,7 @@
     var N = MARKS.length, MARK_R = 12;
     if (this.intro > 2.05 && !still) {
       this.selT += dt;
-      if (this.sel < 0 || this.selT > 1.85) {   /* VI-7 · 20% faster */ this.selT = 0; this.sel = this.sel < 0 ? 0 : (this.sel + 1) % N; var m0 = MARKS[this.sel]; this.label = m0.k ? NAME[m0.k] : 'Login'; this.labelT = 0; }
+      if (this.sel < 0 || this.selT > 1.85) {   /* VI-7 · 20% faster */ this.selT = 0; this.sel = this.sel < 0 ? 0 : (this.sel + 1) % N; var m0 = MARKS[this.sel]; this.label = m0.k ? NAME[m0.k] : m0.l; this.labelT = 0; }
       this.labelT += dt;
     }
     var cx = w / 2, cy = h / 2, RR = Math.max(60, Math.min(Math.min(w, h) / 2 - 26, 168));

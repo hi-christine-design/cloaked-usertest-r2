@@ -180,13 +180,13 @@
     <div class="ctl"><span class="t2">Build</span>
       <div class="seg" id="segDay"><button data-v="DayOne">Day 01</button><button data-v="Day30">Day 30</button></div></div>
     <!-- Christine, 21 Oct: Day 01 starts from the onboarding; this skips it (home at once) -->
-    <!-- round 67 (Christine): Skip onboarding removed — every feature has its own cover and onboarding now -->
-    <div class="rule" id="ruleSkip" hidden></div>
-    <div class="ctl" id="ctlSkip" hidden><span class="t2">Skip onboarding</span>
-      <div class="seg" id="segSkip"><button data-v="off">Off</button><button data-v="on">On</button></div></div>
+    <!-- round 85 (Christine): back as "App onboarding" On/Off — the build's welcome flow ("Okay, so your data is out there…"), Day 01 only. On = shown (skip off) -->
+    <div class="rule" id="ruleSkip"></div>
+    <div class="ctl" id="ctlSkip"><span class="t2">App onboarding</span>
+      <div class="seg" id="segSkip"><button data-v="off">On</button><button data-v="on">Off</button></div></div>
     <!-- Christine, 23 Oct (round 58): the onboarding version moved here from the right tab, Day 01 only -->
     <div class="rule" id="ruleVonb"></div>
-    <div class="ctl" id="ctlVonb"><span class="t2">Onboarding</span>
+    <div class="ctl" id="ctlVonb"><span class="t2">Vault &amp; Identity onboarding</span>
       <div class="seg" id="segVonb"><button data-v="2">V1</button><button data-v="n4">V2</button></div></div>
   </div>
 </aside>
@@ -367,7 +367,7 @@ var NAMES = { identity: 'Identity', folder: 'Folder', aliasid: 'Alias ID', idcar
 var STORE = 'ut2-launcher-2tabs-v2';
 var S = { i: 0, day: 'Day30', mode: 'after', skip: 'off', vonb: '1', rtab: 'check' };
 try { var saved = JSON.parse(localStorage.getItem(STORE) || 'null'); if (saved) Object.assign(S, saved); } catch (e) {}
-if (/^n2?$/.test(S.vonb)) S.vonb = 'n3'; if (S.vonb === 'n3') S.vonb = 'n4'; if (!/^(2|n4)$/.test(S.vonb)) S.vonb = '2';   /* round 59: V3 = n4 · round 64: the tabbed V2 (n3) dropped, n4 is now V2 */   /* round 55: V2.1 retired, V2.2 is now just V2 */   /* round 44: V2.1 retired */ S.rtab = 'check'; S.skip = 'off';   /* round 67: no Skip control, so never skip */   /* round 40: V1 = Yuan's (default), V2 = the scroll page */
+if (/^n2?$/.test(S.vonb)) S.vonb = 'n3'; if (S.vonb === 'n3') S.vonb = 'n4'; if (!/^(2|n4)$/.test(S.vonb)) S.vonb = '2';   /* round 59: V3 = n4 · round 64: the tabbed V2 (n3) dropped, n4 is now V2 */   /* round 55: V2.1 retired, V2.2 is now just V2 */   /* round 44: V2.1 retired */ S.rtab = 'check';   /* round 40: V1 = Yuan's (default), V2 = the scroll page */
 /* Christine, 19 Oct: always open with nothing picked, on the plain prototype;
    picking a row plays its flow, picking it again unpicks it (S.i = -1) */
 S.i = -1;
@@ -476,7 +476,7 @@ function paint() {
   paintTabs();
   var s = curS();
   var cur = { day: (s && s.day) || S.day, skip: S.skip === 'on' ? 'on' : 'off' };
-  $('ctlSkip').hidden = $('ruleSkip').hidden = true;   /* round 67: the control is gone */
+  $('ctlSkip').hidden = $('ruleSkip').hidden = cur.day !== 'DayOne';   /* round 85: App onboarding, Day 01 only */
   $('ctlVonb').hidden = $('ruleVonb').hidden = cur.day !== 'DayOne';
   cur.vonb = S.vonb;
   [['segDay', 'day'], ['segSkip', 'skip'], ['segVonb', 'vonb']].forEach(function (p) {

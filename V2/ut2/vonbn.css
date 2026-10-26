@@ -156,3 +156,36 @@
 .vtn-tray.car .vtn-av { width: 40px; height: 40px; }
 .vtn-tray.car .vtn-tx b { font-size: 16px; letter-spacing: -.32px; }
 .vtn-tray.car .vtn-tx i { font-size: 14px; letter-spacing: -.28px; }
+
+/* round 83: page 1 shows Yuan's ring instead of the list */
+.vtn.paged .vtn-scroll > section.vtn-has-ring .vtn-art { visibility: hidden; }
+.vtn-ring0 { position: absolute; left: 0; right: 0; top: calc(250px + var(--o)); width: 100%; height: 440px; z-index: 1; pointer-events: none; display: block; }
+
+/* round 87: at the FAQs the fade sits just above Get started (the last cards end 40px above it) */
+.vtn.paged.vtn-atfaq .vtn-scroll {
+  -webkit-mask-image: linear-gradient(to bottom, transparent calc(var(--hdr-top, 72px) + 20px), #000 calc(var(--hdr-top, 72px) + 64px), #000 calc(100% - 124px), transparent calc(100% - 100px));
+          mask-image: linear-gradient(to bottom, transparent calc(var(--hdr-top, 72px) + 20px), #000 calc(var(--hdr-top, 72px) + 64px), #000 calc(100% - 124px), transparent calc(100% - 100px)); }
+
+/* round 88 (Figma 225:10344): the two activity pages — centred titles; on the phone + email page the email alias is above the phone alias */
+.vtn-center .vtn-t { text-align: center; }
+.vtn-art.vtn-pe .vtn-head { top: 127px; }
+.vtn-art.vtn-pe .vtn-head.vtn-head2 { top: 47.5px; }
+.vtn-art.vtn-pe .vtn-line { top: 198.8px; }
+.vtn.paged .vtn-scroll > section.vtn-center .vtn-art { top: calc(258px + var(--o)); }   /* Figma 225:10344: the first alias row at 305 */
+/* round 89 (Christine): every V2 page title and line centred, as V1 and the activity pages */
+.vtn.paged .vtn-t { text-align: center; }
+
+/* round 90: the Vault activity pages take the Identity page's notification motion — each new one drops in on top and pushes the rest down (max 3) */
+.vtn-ding .vtn-acts, .vtn-ding > .vtn-act { display: none; }
+.vtn-notes { position: absolute; left: 23.5px; right: 23.5px; display: flex; flex-direction: column; }
+.vtn-n { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s cubic-bezier(.32, .72, 0, 1), opacity .4s ease; }
+.vtn-n.on { grid-template-rows: 1fr; }
+.vtn-n.out { opacity: 0; }
+.vtn-nin { min-height: 0; overflow: hidden; }
+.vtn-nin .vtn-act { position: relative; left: auto; right: auto; top: auto !important; margin-bottom: 9.39px; opacity: 0; transform: translateY(-18px) scale(.94); transform-origin: 50% 0;
+  transition: opacity .3s ease .08s, transform .55s cubic-bezier(.34, 1.56, .64, 1) .08s; }
+.vtn-n.on .vtn-act { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .vtn-n, .vtn-nin .vtn-act { transition: none; } }
+/* round 95 (Christine): the Vault cover has no glow — plain dark, as V1's tray */
+.vti-tray.vtn-tray, .vti-tray.vtn-tray.orb { background: #141410; }
+.vti-tray.vtn-tray .vtn-torb { display: none !important; }

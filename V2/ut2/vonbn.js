@@ -98,10 +98,11 @@
      and no "Save them here" page (straight on to the alias). The four-page story above is now V2.1 (&ut2vonb=n2). */
   var LOGOS = true;   /* round 55 (Christine): V2.1 retired — n, n2 and n3 all open the logos-first V2; the four-page path stays below, unused */
   /* round 81 (Christine: the activity page was too long to wait for): one page per kind — the noun and the art change, "all in one place" stays on the second line */
-  var PAGEK = [null, null, 'phone', 'email', 'card'];
-  if (PAGED && LOGOS) COPY = [COPY[0], COPY[1], '<h1>Calls and messages<br>all in one place</h1>', '<h1>Emails<br>all in one place</h1>', '<h1>Payments<br>all in one place</h1>'];
+  /* round 88 (Christine, Figma Dashboard 225:10344): two pages, not three — phone + email (the alias inbox), then cards */
+  var PAGEK = [null, null, 'pe', 'card'];
+  if (PAGED && LOGOS) COPY = [COPY[0], COPY[1], '<h1>Phone and email, Alias inbox happens here</h1>', '<h1>Alias cards transactions happen here</h1>'];
   else if (PAGED) COPY = LOGOS ? [COPY[0], COPY[1], COPY[2]] : [COPY[0], '<h1>Keep it all here, ready when you need it</h1>', COPY[1], COPY[2]];
-  var KIND = LOGOS ? [1, 2, 3, 3, 3] : [0, 1, 2, 3];   /* page → its art's pose */
+  var KIND = LOGOS ? [1, 2, 3, 3] : [0, 1, 2, 3];   /* page → its art's pose */
   var NS = COPY.length, LAST = NS - 1;
   var ART = '<div class="vtn-art">' +
       '<div class="vtn-fab">' + FAB + '</div>' +
@@ -142,6 +143,26 @@
     return A;
   }
   var ARTS = QA('.vtn-art').map(refs);
+  /* round 88: the phone + email page — the email alias sits above the phone alias, and the phone's two (June, Lululemon) follow;
+     the cards page keeps two charges */
+  if (PAGED && LOGOS) PAGEK.forEach(function (k, j) {
+    var A = ARTS[j]; if (!A || !k) return;
+    A.el.parentNode.classList.add('vtn-center');
+    if (k === 'pe') {
+      A.el.classList.add('vtn-pe');
+      var h2 = A.head.cloneNode(true); h2.className = 'vtn-head vtn-head2';
+      [].forEach.call(h2.children, function (c) { var e = c.classList.contains('h-email'); c.style.opacity = e ? 1 : 0; c.style.transform = 'none'; });
+      A.head.parentNode.insertBefore(h2, A.head); A.head2 = h2;
+      var ph = A.acts.phone; if (ph[1]) ph[1].style.display = 'none';
+      var y = 153.3 + 79.5; [ph[0], ph[2]].forEach(function (r) { if (!r) return; r.style.top = y + 'px'; y += (r.classList.contains('tall') ? 86.72 : 70.4) + 9.39; });
+    }
+    if (k === 'card' && A.acts.card[2]) A.acts.card[2].style.display = 'none';
+    /* round 90 (Christine): the activity arrives like notifications (the Identity page's motion) — newest on top, stacking, looping */
+    A.el.classList.add('vtn-ding');
+    var nb = document.createElement('div'); nb.className = 'vtn-notes'; nb.style.top = (k === 'pe' ? 232.8 : 153.3) + 'px';
+    A.el.appendChild(nb); A.notes = nb;
+    A.noteSrc = k === 'pe' ? [ACTS.phone[0], ACTS.email[0], ACTS.phone[2], ACTS.phone[1], ACTS.email[2]] : ACTS.card.slice();
+  });
   function artOf(k) { return ARTS[PAGED ? k : 0]; }
 
   /* ── a tiny timeline: set (no motion) / to (with motion) / at (later) ── */
@@ -232,14 +253,30 @@
     at(1100 + d, function () { next(3200); });
   }
   /* V2.2 poses and the two halves of the first scene */
-  function poseP(A, j, rest) { poseK(A, KIND[j], rest); if (LOGOS && PAGEK[j]) headOf(A, PAGEK[j]); }
+  function poseP(A, j, rest) { poseK(A, KIND[j], rest); if (LOGOS && PAGEK[j]) headOf(A, PAGEK[j] === 'pe' ? 'phone' : PAGEK[j]); if (A.head2) set(A.head2, { opacity: PAGEK[j] === 'pe' ? 1 : 0 }); }
   function headOf(A, kk) { ['phone', 'email', 'card'].forEach(function (k) { set(A.heads[k], { opacity: k === kk ? 1 : 0, transform: 'none' }); }); flush(); }
   /* round 81: a kind's page — its alias on top, the line draws, its three arrive; once, and they stay */
   function pAct(kk) {
     return function (A) {
-      poseK(A, 3); headOf(A, kk);
+      var k2 = kk === 'pe' ? 'phone' : kk;
+      poseK(A, 3); headOf(A, k2); if (A.head2) set(A.head2, { opacity: kk === 'pe' ? 1 : 0 });
       at(150, function () { to(A.line, { transform: 'scaleY(1)' }, 420); });
-      A.acts[kk].forEach(function (r, i) { at(420, function () { to(r, { opacity: 1, transform: 'none' }, 520, EZ, i * 140); }); });
+      if (A.notes) {   /* round 90: notifications, one by one */
+        var box = A.notes, src = A.noteSrc, n = 0, me = cur, MAXN = 3;
+        box.innerHTML = '';
+        var ding = function () {
+          if (cur !== me || !page.classList.contains('open')) return;
+          var w = document.createElement('div'); w.className = 'vtn-n';
+          w.innerHTML = '<div class="vtn-nin">' + src[n % src.length] + '</div>'; n++;
+          box.insertBefore(w, box.firstChild); void w.offsetWidth; w.classList.add('on');
+          var all = box.querySelectorAll('.vtn-n:not(.out)');
+          for (var i = MAXN; i < all.length; i++) (function (o) { o.classList.add('out'); setTimeout(function () { if (o.parentNode) o.parentNode.removeChild(o); }, 420); })(all[i]);
+          if (!still) at(1700, ding);
+        };
+        if (still) { for (var i = 0; i < MAXN; i++) ding(); } else at(560, ding);
+        return;
+      }
+      A.acts[k2].filter(function (r) { return r.style.display !== 'none'; }).forEach(function (r, i) { at(420, function () { to(r, { opacity: 1, transform: 'none' }, 520, EZ, i * 140); }); });
     };
   }
   function poseK(A, k, rest) {
@@ -313,21 +350,32 @@
     };
   }
 
+  /* round 83 (Christine): page 1's art is Yuan's ring too (window.vtiRingMount, from v3vonb), labels mixed across the vault's kinds */
+  var RING0 = null;
+  (function () {
+    var sec0 = Q('.vtn-scroll > section'); if (!sec0 || typeof window.vtiRingMount !== 'function') return;
+    var cv = document.createElement('canvas'); cv.className = 'vti-ring vtn-ring0'; cv.setAttribute('aria-hidden', 'true');
+    sec0.appendChild(cv); sec0.classList.add('vtn-has-ring');
+    RING0 = window.vtiRingMount(cv);
+  })();
   /* ── scenes on the scroll (V3's rule: land, then play) ── */
   var cur = -1, settle = 0;
   function scene(k) {
     if (k === cur) return; cur = k;
     clear();
+    if (RING0) { if (k === 0) RING0.play(); else RING0.stop(); }
     titles.forEach(function (t, i) { t.classList.toggle('on', i === k); });
     page.classList.toggle('s2', k === LAST);
     /* V2.2: the pages you are not on wait in their starting pose, so scrolling to one shows it ready */
     if (PAGED) ARTS.forEach(function (A, j) { if (j !== k) poseP(A, j, true); });
-    (PAGED ? (LOGOS ? [pItems, loopP(1, pAlias, 4400), pAct('phone'), pAct('email'), pAct('card')] : [pKinds, pItems, loopP(2, pAlias, 4400), pCalls]) : [play0, play1, play2])[k](artOf(k));
+    (PAGED ? (LOGOS ? [pItems, loopP(1, pAlias, 4400), pAct('pe'), pAct('card')] : [pKinds, pItems, loopP(2, pAlias, 4400), pCalls]) : [play0, play1, play2])[k](artOf(k));
   }
   scroller.addEventListener('scroll', function () {
     clearTimeout(settle);
     settle = setTimeout(function () { scene(Math.max(0, Math.min(LAST, Math.round(scroller.scrollTop / Math.max(1, scroller.clientHeight))))); }, PAGED ? 260 : 140);
   }, { passive: true });
+  /* round 87 (Christine): at the FAQs the bottom fade moves down to just above Get started, so the cards aren't covered (as V1) */
+  scroller.addEventListener('scroll', function () { page.classList.toggle('vtn-atfaq', scroller.scrollTop > LAST * scroller.clientHeight + 8); }, { passive: true });
   Q('.vtn-cue').addEventListener('click', function () { scroller.scrollTo({ top: (cur + 1) * scroller.clientHeight, behavior: 'smooth' }); });
 
   /* ── open / close / Get started ── */
@@ -345,7 +393,7 @@
   function orbF(ts) { orbId = 0; if (!page.classList.contains('open') || typeof window.vtiOrbDraw !== 'function') return; window.vtiOrbDraw(orbCv, ts); if (!still) orbId = requestAnimationFrame(orbF); }
   function orbGo() { if (typeof window.vtiOrbDraw !== 'function') return; page.classList.add('orb'); if (!orbId) orbId = requestAnimationFrame(orbF); }
   function close(keepNav) {
-    clear(); cur = -1;
+    clear(); cur = -1; if (RING0) RING0.stop();
     page.classList.remove('open'); page.setAttribute('aria-hidden', 'true');
     if (!keepNav) navOut(false);
   }
@@ -366,7 +414,9 @@
   if (PAGED) (function () {
     var tray = document.querySelector('#vtIntroTray .vti-tray'); if (!tray) return;
     tray.classList.add('vtn-tray');
-    var ring = tray.querySelector('.vti-ring'); if (ring) ring.style.display = 'none';
+    /* round 83 (Christine): the cover is Yuan's ring again (V1 and V2 alike), on our moving glow; the list wheel (round 56–80) is kept, switched off */
+    var RINGCOVER = true;
+    var ring = tray.querySelector('.vti-ring'); if (ring && !RINGCOVER) ring.style.display = 'none';
     var art = document.createElement('div'); art.className = 'vtn-tart'; art.setAttribute('aria-hidden', 'true');
     if (LOGOS) tray.classList.add('logos');
     art.innerHTML = '<div class="vtn-tin"><div class="vtn-tfab">' + FAB + '</div>' + KINDS.map(function (k, i) {
@@ -384,6 +434,7 @@
     }
     if (ring) ring.parentNode.insertBefore(art, ring); else tray.insertBefore(art, tray.querySelector('.vti-cta'));
     if (!LOGOS) return;
+    if (RINGCOVER) { tray.classList.remove('car', 'logos'); art.style.display = 'none'; }
     var TS = 76, TMID = 28 + 2 * TS,   /* round 80: bigger rows (title 16px, as the button) */ rows = [].slice.call(art.querySelectorAll('.vtn-row')), N = rows.length, tf = 2, tt = 0;
     function tPose(animate) {
       rows.forEach(function (r, i) {
@@ -403,14 +454,16 @@
       clearTimeout(tt); tt = 0;
       if (trayW.classList.contains('on')) { tf = 2; rows.forEach(function (r) { r.__rel = null; }); tPose(false); if (!still) tt = setTimeout(tStep, 1200); }
     }
+    if (!RINGCOVER) {
     tPose(false);
     new MutationObserver(tSync).observe(trayW, { attributes: true, attributeFilter: ['class'] });
     tSync();
+    }
     /* round 80 (Christine): the light glow behind the tray moves — the page's breathing orb (Yuan's drawOrb) */
     var tcv = document.createElement('canvas'); tcv.className = 'vtn-torb'; tcv.setAttribute('aria-hidden', 'true');
     tray.insertBefore(tcv, tray.firstChild);
     var tId = 0;
-    function tOrb(ts) { tId = 0; if (!trayW.classList.contains('on') || typeof window.vtiOrbDraw !== 'function') return; window.vtiOrbDraw(tcv, ts); if (!still) tId = requestAnimationFrame(tOrb); }
+    function tOrb(ts) { tId = 0; if (true || !trayW.classList.contains('on') || typeof window.vtiOrbDraw !== 'function') return; window.vtiOrbDraw(tcv, ts); if (!still) tId = requestAnimationFrame(tOrb); }
     new MutationObserver(function () {
       if (trayW.classList.contains('on') && typeof window.vtiOrbDraw === 'function') { tray.classList.add('orb'); if (!tId) tId = requestAnimationFrame(tOrb); }
     }).observe(trayW, { attributes: true, attributeFilter: ['class'] });

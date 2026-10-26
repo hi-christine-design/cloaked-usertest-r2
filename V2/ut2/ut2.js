@@ -86,6 +86,8 @@
       else { ONB.want = true; VTRAY.done = true; showVaultTray(); }
     }, 900);
   });
+  /* round 98: logos inlined for file:// (see logos.js) */
+  if (!window.UT2_LOGOS) document.write('<script src="../ut2/logos.js"></scr' + 'ipt>');
   if (V3ID && !window.UT2_V3ID) {
     var V3V = ((document.currentScript && document.currentScript.src) || '').split('?')[1] || '';
     document.documentElement.classList.add('ut2-v3id');
@@ -693,7 +695,16 @@
     if (rgbOf(bg) === rgbOf(AL_BG)) return { c: '#8a3407', al: true };
     return { c: (mk ? ink : bg) || ink || bg || '#8a3407', al: false };
   }
+  /* round 98 (Christine): a card-shaped avatar turns as a card — its faces keep its own corners, not a disc */
+  function keepShape(av) {
+    var cs = getComputedStyle(av), r = av.getBoundingClientRect(), rr = cs.borderTopLeftRadius || '', rad = parseFloat(rr) || 0;
+    if (/%/.test(rr)) rad = rad / 100 * Math.min(r.width, r.height);
+    var rect = Math.abs(r.width - r.height) > 2;   /* only a wide (card) avatar turns as a card */
+    av.classList.toggle('ut2-rect', rect);
+    if (rect) av.style.setProperty('--ut2-r', cs.borderTopLeftRadius || '6px');
+  }
   function coin(av) {
+    keepShape(av);
     var w = av.getBoundingClientRect().width || 40, th = Math.max(4, Math.round(w * 0.15));
     av.style.setProperty('--ut2-th', th + 'px');
     av.style.setProperty('perspective', Math.round(w * 6) + 'px');
@@ -3012,8 +3023,18 @@
      icon (97589). A logo has no two colours, so it only turns. */
   var AL_BG = '#141410', AL_INK = '#FF550C';
   var SVG_CACHE = {};
+  function logoEntry(url) {
+    var L = window.UT2_LOGOS; if (!L || !url) return null;
+    var k = String(url).split('?')[0].replace(/^\.\//, ''); try { k = decodeURIComponent(k); } catch (e) {}
+    return L[k] || null;
+  }
+  function srcOf(url) {
+    var e = logoEntry(url); if (!e) return url;
+    return e.png || ('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(e.svg));
+  }
   function fetchSVG(url) {
     if (SVG_CACHE[url]) return SVG_CACHE[url];
+    var le = logoEntry(url); if (le && le.svg) return (SVG_CACHE[url] = Promise.resolve(le.svg));
     return (SVG_CACHE[url] = fetch(url).then(function (r) { return r.ok ? r.text() : ''; }).catch(function () { return ''; }));
   }
   /* a baked-in avatar svg (assets/Avatar/…): the first filled shape is the disc, the rest the mark */
@@ -3074,10 +3095,10 @@
       } catch (e) { MASK_CACHE[url] = url; cb(url); }
     };
     im.onerror = function () { cb(url); };
-    im.src = url;
+    im.src = srcOf(url);
   }
   /* 22 Oct: 56% box — a logo file's drawing fills ~80% of it, so ~45% of the disc, the same as the marks (fitMark) */
-  var MASK = function (url) { return '-webkit-mask:url(&quot;' + url + '&quot;) center/56% no-repeat;mask:url(&quot;' + url + '&quot;) center/56% no-repeat;'; };
+  var MASK = function (url) { url = /^data:/.test(url) ? url : srcOf(url); return '-webkit-mask:url(&quot;' + url + '&quot;) center/56% no-repeat;mask:url(&quot;' + url + '&quot;) center/56% no-repeat;'; };
   /* what an avatar is made of — enough to redraw it in other colours */
   function avInfo(av) {
     if (!av) return null;
@@ -3167,6 +3188,7 @@
     var go = function () {
       var bg = info.bg || getComputedStyle(av).backgroundColor, ink = info.ink || getComputedStyle(av).color;
       var keep = av.innerHTML, keepCls = av.className, keepStyle = av.getAttribute('style') || '';
+      keepShape(av);
       av.classList.add('ut2-spinav');
       /* Christine, 22 Oct: V3's flip (MV-7b/7c) — a coin, not a card: tight
          perspective, a 6px side band seen edge-on, .42s cubic-bezier(.4,0,.2,1) */
@@ -3179,7 +3201,7 @@
       try { sp.animate([{ transform: 'rotateY(0deg)' }, { transform: 'rotateY(180deg)' }], { duration: 420, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' }); } catch (e) {}
       setTimeout(function () {
         open();
-        setTimeout(function () { av.className = keepCls; av.setAttribute('style', keepStyle); av.innerHTML = keep; row.__ut2pick = 0; }, 600);   /* put back once the page covers it */
+        setTimeout(function () { av.className = keepCls; av.setAttribute('style', keepStyle); av.classList.remove('ut2-rect'); av.innerHTML = keep; row.__ut2pick = 0; }, 600);   /* put back once the page covers it */
       }, 440);
     };
     if (info.kind === 'svg' && !info.svg) fetchSVG(info.url).then(function (txt) { var f = svgFills(txt); info.svg = txt; info.bg = info.bg || f[0]; info.ink = info.ink || f[1]; go(); }, go);
@@ -3429,6 +3451,103 @@
     cs.forEach(function (c, i) { put(i, AT[2][i] === OFF ? OFF : AT[0][i], 0); });
     return { kick: kick };
   }
+  /* round 82 (Christine): the Identity cover (V1 and V2) — no more one card at a time: your own card comes in,
+     then the others rise and stack over it like an Apple Wallet, hold, slip back, again (the welcome card's
+     idStack motion, at the tray's size). The tray turns light (Figma Dashboard 220:13690): it's not only about aliases. */
+  /* round 84 (Christine, Figma Dashboard 222:10315): the cover's layout — white sheet, title, then your own
+     "My main identity" card (light) at the top; Hide my info rises over it, then the rest stack on in 60px
+     steps like an Apple Wallet, under a footer rule with Learn more; slip back, again. */
+  var WAL_CARDS = [{ t: 'My main identity', n: 7, bg: '#ffffff', ink: '#141410', tile: '#ff550c', light: 1, f: [['Phone', '425-235-6234'], ['Email', 'Margaret611@gmail.com'], ['Expiration date', 'Never']] }]
+    .concat(IDS_CARDS.slice(1))
+    .concat([{ t: 'Sign up for free trials', n: 3, bg: '#bba7dd', ink: '#141410', tile: '#a08fc0', f: [['Phone', '425-235-6234'], ['Email', 'hidemy241@cloaked.com'], ['Expiration date', 'Never']] }]);   /* #bba7dd = identity/iris-01 */
+  function walCardHTML(c, i) {
+    return idsCardHTML(c, i).replace('ut2-idsc', 'ut2-walc' + (c.light ? ' ut2-wal-light real' : '')).replace('Digital risk: Good', c.n + ' items');
+  }
+  if (AFTER && V3ID) window.addEventListener('load', function () {
+    var trayW = document.getElementById('icIntroTray'); if (!trayW) return;
+    var tray = trayW.querySelector('.vti-tray'); if (!tray || tray.querySelector('.ut2-wal')) return;
+    tray.classList.add('ut2-ictray');
+    /* round 98 (Christine): V1's cover the same as V2's — one line, no paragraph */
+    var th = tray.querySelector('.vti-h1'); if (th) th.textContent = 'One you, many identities';
+    var tp = tray.querySelector('.vti-tray-p'); if (tp) tp.style.display = 'none';
+    tray.setAttribute('aria-label', 'One you, many identities');
+    var old = tray.querySelector('.iti-stack');
+    var box = el('<div class="ut2-wal" aria-hidden="true">' + WAL_CARDS.map(walCardHTML).join('') + '</div>');
+    if (old) { old.style.display = 'none'; old.parentNode.insertBefore(box, old); }
+    else tray.insertBefore(box, tray.querySelector('.vti-cta'));
+    var cs = [].slice.call(box.querySelectorAll('.ut2-walc')), N = cs.length;
+    var STEP = 60, T = [], on = false;
+    var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function OFF() { return box.clientHeight + 24; }
+    function put(i, y, ms, delay) {
+      var c = cs[i];
+      c.style.transition = ms ? 'transform ' + ms + 'ms cubic-bezier(.32,.72,0,1) ' + (delay || 0) + 'ms, opacity 400ms ease ' + (delay || 0) + 'ms' : 'none';
+      c.style.transform = 'translate(-50%,' + y + 'px)';
+    }
+    function later(fn, ms) { T.push(setTimeout(fn, ms)); }
+    function stacked(ms) { cs.forEach(function (c, i) { put(i, i * STEP, ms, i > 1 ? (i - 2) * 260 : 0); }); }
+    var T1 = 1200, T2 = T1 + 1800, HOLD = T2 + (N - 3) * 260 + 900 + 2400;
+    function loop() {
+      T.forEach(clearTimeout); T = [];
+      if (!on) return;
+      cs.forEach(function (c, i) { put(i, i ? OFF() : 0, 0); c.style.opacity = i ? 1 : 0; });
+      void box.offsetWidth;
+      cs[0].style.transition = 'opacity 500ms ease'; cs[0].style.opacity = 1;   /* your own card */
+      later(function () { put(1, STEP, 900); }, T1);                               /* Hide my info rises over it */
+      later(function () { for (var i = 2; i < N; i++) put(i, i * STEP, 900, (i - 2) * 260); }, T2);   /* the rest stack on */
+      later(function () { for (var i = N - 1; i > 0; i--) put(i, OFF(), 700, (N - 1 - i) * 110); }, HOLD);
+      later(loop, HOLD + 1300);
+    }
+    function sync() {
+      var want = trayW.classList.contains('on');
+      if (want && !on) { on = true; if (still) stacked(0); else loop(); }
+      else if (!want && on) { on = false; T.forEach(clearTimeout); T = []; }
+    }
+    stacked(0);
+    new MutationObserver(sync).observe(trayW, { attributes: true, attributeFilter: ['class'] });
+    sync();
+  });
+  /* round 86 (Christine, Figma Dashboard 220:13690): the Identity onboarding's first page — light, your Primary
+     identity first, then the others rise and stack over it in 60px steps (once per visit, then they stay). */
+  /* round 96 (Christine): your own card is always the white one with the security pattern, as in the app */
+  var PG_CARDS = WAL_CARDS.slice(0, 1).concat(IDS_CARDS.slice(1)).concat([{ t: 'Sign up for free trials', n: 3, bg: '#bba7dd', ink: '#141410', tile: '#a08fc0', f: [['Phone', '425-235-6234'], ['Email', 'hidemy241@cloaked.com'], ['Expiration date', 'Never']] }]);
+  if (AFTER && V3ID) window.addEventListener('load', function () {
+    var page = document.getElementById('iiIntro'), sc = document.getElementById('iiScroll'), s1 = document.getElementById('iiS1');
+    if (!page || !sc || !s1 || s1.querySelector('.ut2-pgw')) return;
+    s1.classList.add('ut2-pg1');
+    var art = s1.querySelector('.vti-art'), old = s1.querySelector('.iti-stack'); if (old) old.style.display = 'none';
+    var box = el('<div class="ut2-pgw" aria-hidden="true">' + PG_CARDS.map(function (c, i) {
+      return idsCardHTML(c, i).replace('ut2-idsc', 'ut2-pgc' + (c.light ? ' real' : '')).replace('Digital risk: Good', c.n + ' items');
+    }).join('') + '</div>');
+    (art || s1).appendChild(box);
+    var cs = [].slice.call(box.querySelectorAll('.ut2-pgc')), N = cs.length, STEP = 60, T = [], played = false;
+    var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function put(i, y, ms, d) { var c = cs[i]; c.style.transition = ms ? 'transform ' + ms + 'ms cubic-bezier(.32,.72,0,1) ' + (d || 0) + 'ms, opacity 400ms ease' : 'none'; c.style.transform = 'translate(-50%,' + y + 'px)'; }
+    function stacked() { cs.forEach(function (c, i) { put(i, i * STEP, 0); c.style.opacity = 1; }); }
+    function play() {
+      T.forEach(clearTimeout); T = [];
+      if (still) { stacked(); return; }
+      var off = box.clientHeight + 24;
+      cs.forEach(function (c, i) { put(i, i ? off : 0, 0); c.style.opacity = i ? 1 : 0; });
+      void box.offsetWidth;
+      cs[0].style.transition = 'opacity 500ms ease'; cs[0].style.opacity = 1;
+      T.push(setTimeout(function () { for (var i = 1; i < N; i++) put(i, i * STEP, 900, (i - 1) * 220); }, 700));
+    }
+    /* the bar, cue and button turn dark-on-light while this page is the one on screen */
+    function onPg1() { return Math.round(sc.scrollTop / Math.max(1, sc.clientHeight)) === 0; }
+    function sync() {
+      var open = page.classList.contains('open');
+      var ALL = true;   /* round 92 → 97 (Christine): every Identity onboarding page is light, V1 and V2 */
+      page.classList.toggle('ut2-ii-all', ALL);
+      page.classList.toggle('ut2-ii-pg1', open && onPg1());
+      page.classList.toggle('ut2-ii-light', open && (ALL || onPg1()));
+      if (open && onPg1() && !played) { played = true; play(); }
+      if (!open) { played = false; T.forEach(clearTimeout); T = []; }
+    }
+    stacked();
+    sc.addEventListener('scroll', sync, { passive: true });
+    new MutationObserver(function () { setTimeout(sync, 30); }).observe(page, { attributes: true, attributeFilter: ['class'] });
+  });
   function idSlides(host, live) {
     var pill = function (k, top, w, txt) {
       return '<div class="pl" style="top:' + top + 'px;width:' + w + 'px"><span class="pa">' + SL_IC[k] + '</span><span class="pt">' + txt + '</span></div>';
